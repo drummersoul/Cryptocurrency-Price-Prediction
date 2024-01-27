@@ -32,9 +32,44 @@ print(crypto_name)
 final_avg_df_ls = pd.DataFrame()
 
 for crypto in crypto_name:
-    avg_df = df[['open', 'high', 'low', 'close', 'volume', 'marketCap']].loc[df['crypto_name'] == 'Bitcoin'].mean() #calculate mean or avg
+    avg_df = df[['open', 'high', 'low', 'close', 'volume', 'marketCap']].loc[df['crypto_name'] == crypto].mean() #calculate mean or avg
     final_avg_df_ls = pd.concat([final_avg_df_ls, pd.DataFrame({"crypto_name" :[crypto], "avg_open" : [avg_df['open']], "avg_high" : [avg_df['high']],
                          "avg_close" : [avg_df['close']], "avg_volume" : [avg_df['volume']], "avg_marketCap" : [avg_df['marketCap']]})]
                          , ignore_index=True)
 
-print(final_avg_df_ls.sort_values(['crypto_name'])) #sort the data
+# print(final_avg_df_ls.sort_values(['crypto_name'])) #sort the data
+print(final_avg_df_ls)
+
+print("==============================================")
+
+# count of number of values for each crypto
+crypto_name = df['crypto_name'].unique() #return unquie values in the respective row
+print(crypto_name)
+
+final_avg_df_ls = pd.DataFrame()
+
+for crypto in crypto_name:
+    avg_df = df['crypto_name'].loc[df['crypto_name'] == crypto].size #calculate mean or avg
+    final_avg_df_ls = pd.concat([final_avg_df_ls, pd.DataFrame({"crypto_name" :[crypto], "no.of records" : avg_df})]
+                         , ignore_index=True)
+
+# print(final_avg_df_ls.sort_values(['crypto_name'])) #sort the data
+print(final_avg_df_ls)
+
+print("==============================================")
+
+# time frame of each crypto
+crypto_name = df['crypto_name'].unique() #return unquie values in the respective row
+print(crypto_name)
+
+final_avg_df_ls = pd.DataFrame()
+
+for crypto in crypto_name:
+    avg_df = df['date'].loc[df['crypto_name'] == crypto] #calculate mean or avg
+    final_avg_df_ls = pd.concat([final_avg_df_ls, pd.DataFrame({"crypto_name" :[crypto], "start_date" : avg_df.min(),
+                                                                "end_date" : avg_df.max()})]
+                         , ignore_index=True)
+
+# print(final_avg_df_ls.sort_values(['crypto_name'])) #sort the data
+print(final_avg_df_ls)
+print("==============================================")
