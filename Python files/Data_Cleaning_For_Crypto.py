@@ -8,7 +8,6 @@ current_directory = os.getcwd()
 csv_file_location = os.path.join(current_directory, "Excel DB", "Crypto_data_info.csv")
 
 # Check if the file exists
-print(os.path.exists(csv_file_location))
 if os.path.exists(csv_file_location):
     df = pd.read_csv(csv_file_location)
     print("File successfully loaded.")
@@ -19,5 +18,16 @@ else:
 print(df.head(10))
 print(df)
 
+#Average of whole close column
+print(df["close"].mean())
 
+#Check close if null
+print(df["close"].isnull().sum())
+
+#Check if any columns are null in dataset
+print(df.isnull().sum())
+
+#Get all unique crypto from crypto column and 
+categoriesDf = df['crypto_name'].unique().tolist()
+print(len(categoriesDf))
     
