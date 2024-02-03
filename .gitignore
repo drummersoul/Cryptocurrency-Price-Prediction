@@ -2,3 +2,4 @@ venv/
 .env
 env
 virtualenv/
+.DS_Store
