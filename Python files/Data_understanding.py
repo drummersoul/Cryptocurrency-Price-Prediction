@@ -50,3 +50,20 @@ df['day'] = df['date'].dt.day
 
 # Print the first few rows of the DataFrame to see the changes
 print(df.head())
+
+# Group the DataFrame 'df' by the 'year' column and calculate the mean of each numeric column for each group
+data_grouped = df.groupby('year').mean()
+
+# Create a new figure and subplots with a specific size (20x10 inches)
+plt.subplots(figsize=(20, 10))
+
+# Iterate over each column ('open', 'high', 'low', 'close') and its corresponding index
+for i, col in enumerate(['open', 'high', 'low', 'close']):
+    # Create subplots in a 2x2 grid, with each subplot representing one of the numeric columns
+    plt.subplot(2, 2, i + 1)
+
+    # Plot a bar chart for the current column using the grouped data
+    data_grouped[col].plot.bar()
+
+# Display the plot
+plt.show()
