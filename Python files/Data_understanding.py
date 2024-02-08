@@ -2,7 +2,6 @@ import pandas as pd              #Brings in the Pandas library and aliases it as
 import matplotlib.pyplot as plt  #Importing Matplotlib for plotting the data
 import seaborn as sb             #Import seaborn for plotting graphs or make visualizations
 
-
 df = pd.read_csv('dataset.csv')  #Reads data from 'dataset.csv' and stores it in a DataFrame called 'df'.
 df.head()                        #Shows the initial rows of the DataFrame, offering a quick view of the dataset.
 df.shape                         #Provides the number of rows and columns in the DataFrame, indicating its size.
@@ -39,3 +38,15 @@ for i, col in enumerate(features):
     sb.distplot(df[col])
 #This displays the plot grid created by the previous subplots.
 plt.show()
+
+# Extract the year from the 'date' column using the dt accessor in pandas
+df['year'] = df['date'].dt.year
+
+# Extract the month from the 'date' column using the dt accessor in pandas
+df['month'] = df['date'].dt.month
+
+# Extract the day from the 'date' column using the dt accessor in pandas
+df['day'] = df['date'].dt.day
+
+# Print the first few rows of the DataFrame to see the changes
+print(df.head())
