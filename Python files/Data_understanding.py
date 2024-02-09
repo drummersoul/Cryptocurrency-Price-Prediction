@@ -2,7 +2,7 @@ import pandas as pd              #Brings in the Pandas library and aliases it as
 import matplotlib.pyplot as plt  #Importing Matplotlib for plotting the data
 import seaborn as sb             #Import seaborn for plotting graphs or make visualizations
 
-df = pd.read_csv(r'C:\Users\kiran\OneDrive\Desktop\crypto prediction\crypto_week5\Cryptocurrency-Price-Prediction\Excel DB\Crypto_data_info.csv')  #Reads data from 'dataset.csv' and stores it in a DataFrame called 'df'.
+df = pd.read_csv('dataset.csv')  #Reads data from 'dataset.csv' and stores it in a DataFrame called 'df'.
 df.head()                        #Shows the initial rows of the DataFrame, offering a quick view of the dataset.
 df.shape                         #Provides the number of rows and columns in the DataFrame, indicating its size.
 df.describe()                    #Presents summary statistics for numerical columns, revealing central tendencies and data spread.
