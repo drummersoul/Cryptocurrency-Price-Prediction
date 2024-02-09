@@ -2,10 +2,12 @@ import pandas as pd              #Brings in the Pandas library and aliases it as
 import matplotlib.pyplot as plt  #Importing Matplotlib for plotting the data
 import seaborn as sb             #Import seaborn for plotting graphs or make visualizations
 
-df = pd.read_csv('dataset.csv')  #Reads data from 'dataset.csv' and stores it in a DataFrame called 'df'.
+df = pd.read_csv(r'C:\Users\kiran\OneDrive\Desktop\crypto prediction\crypto_week5\Cryptocurrency-Price-Prediction\Excel DB\Crypto_data_info.csv')  #Reads data from 'dataset.csv' and stores it in a DataFrame called 'df'.
 df.head()                        #Shows the initial rows of the DataFrame, offering a quick view of the dataset.
 df.shape                         #Provides the number of rows and columns in the DataFrame, indicating its size.
 df.describe()                    #Presents summary statistics for numerical columns, revealing central tendencies and data spread.
+
+print(df)
 
 # Set the figure size to 10x5 inches.
 plt.figure(figsize=(10,5))
@@ -39,6 +41,8 @@ for i, col in enumerate(features):
 #This displays the plot grid created by the previous subplots.
 plt.show()
 
+df['date'] = pd.to_datetime(df['date']) 
+
 # Extract the year from the 'date' column using the dt accessor in pandas
 df['year'] = df['date'].dt.year
 
@@ -52,7 +56,8 @@ df['day'] = df['date'].dt.day
 print(df.head())
 
 # Group the DataFrame 'df' by the 'year' column and calculate the mean of each numeric column for each group
-data_grouped = df.groupby('year').mean()
+data_grouped = df.groupby(['year']).mean(numeric_only=True)
+print(data_grouped)
 
 # Create a new figure and subplots with a specific size (20x10 inches)
 plt.subplots(figsize=(20, 10))

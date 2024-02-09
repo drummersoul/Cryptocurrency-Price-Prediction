@@ -56,4 +56,6 @@ print(bc_df.describe())
 # print(bc_df['close'].min())
 # py.show()
 
+# print(pd.to_datetime(df['date']).dt.year) #to get year in a date objects
+
 print(bc_df.isnull().sum())
