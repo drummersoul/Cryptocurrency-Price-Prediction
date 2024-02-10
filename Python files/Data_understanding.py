@@ -67,7 +67,6 @@ for i, col in enumerate(['open', 'high', 'low', 'close']):
 
 # Display the plot
 plt.show()
-
 # This are the box plots for open..similar can be done for close,low,high.
 plt.title('This is a boxplot of Crypto Open Prices includes outliers')# This is the Title for Boxplot
 plt.xlabel('open price') #label for open boxplot
