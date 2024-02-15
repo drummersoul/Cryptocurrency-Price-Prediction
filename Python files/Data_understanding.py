@@ -1,8 +1,9 @@
 import pandas as pd              #Brings in the Pandas library and aliases it as 'pd' for data manipulation.
 import matplotlib.pyplot as plt  #Importing Matplotlib for plotting the data
 import seaborn as sb             #Import seaborn for plotting graphs or make visualizations
+import math as math              #import for mathamatical operations
 
-df = pd.read_csv('dataset.csv')  #Reads data from 'dataset.csv' and stores it in a DataFrame called 'df'.
+df = pd.read_csv(r'C:\Users\kiran\OneDrive\Desktop\crypto prediction\main_venkat\Cryptocurrency-Price-Prediction\Excel DB\Crypto_data_info.csv')
 df.head()                        #Shows the initial rows of the DataFrame, offering a quick view of the dataset.
 df.shape                         #Provides the number of rows and columns in the DataFrame, indicating its size.
 df.describe()                    #Presents summary statistics for numerical columns, revealing central tendencies and data spread.
@@ -80,3 +81,50 @@ plt.xlabel('open price') #label for open boxplot
 sb.boxplot(data=df['open'], showfliers=True ,orient='h') #df reads column open ,showflies shows outliers and orientation will be horizontal(h) or vertical(v)
 #Displays the plot
 plt.show()
+
+#Correlation for bitcoin crypto 
+plt.figure(num="Correlation HeatMap")
+print(df.info())
+corr = df.loc[df['crypto_name'] == 'Bitcoin'].iloc[:,1:].corr(numeric_only=True).round(2)
+sb.heatmap(corr, annot=True)
+plt.title("Correlation HeatMap for BitCoin")
+
+
+#ploting graph to check correlation
+plt.figure(num="Scatter Plot")
+for index, val in enumerate(['open', 'high', 'low', 'close', 'volume']):
+    plt.subplot(3,2,index+1)
+    plt.scatter(df.loc[df['crypto_name'] == 'Bitcoin'][val], df.loc[df['crypto_name'] == 'Bitcoin']['marketCap'])
+    plt.xlabel(val)
+    plt.ylabel('marketCap')
+    plt.title(f'Scatter plot between {val} and marketcap ')
+plt.subplots_adjust(left=0.1,
+                    bottom=0.08, 
+                    right=0.9, 
+                    top=0.9, 
+                    wspace=0.1, 
+                    hspace=0.4)
+
+#==================== NOTE =====================
+#
+# from the above figure:- 5 in plot betweeen marketCap and volumn
+# the reason for volumne is having correlation 0.7 is because of an outliear
+#
+#==================== NOTE =====================
+
+#boxplot to check outliers with whisker_length(whis) of 1.5(default value)
+plt.figure(num="Box plot")
+for index, val in enumerate(['open', 'high', 'low', 'close', 'volume', 'marketCap']):
+    plt.subplot(3,2,index+1)
+    plt.boxplot(pd.array(df.loc[df['crypto_name'] == 'Bitcoin'][val]), vert = False)
+    plt.title(f'Box plot of {val} ')
+plt.subplots_adjust(left=0.1,
+                    bottom=0.08, 
+                    right=0.9, 
+                    top=0.9, 
+                    wspace=0.1, 
+                    hspace=0.4)
+plt.show()
+
+#checking null values in Bitcoin dataset
+print(df.loc[df['crypto_name'] == 'Bitcoin'].isnull().sum())
