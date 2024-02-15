@@ -2,6 +2,7 @@ import pandas as pd              #Brings in the Pandas library and aliases it as
 import matplotlib.pyplot as plt  #Importing Matplotlib for plotting the data
 import seaborn as sb             #Import seaborn for plotting graphs or make visualizations
 import math as math              #import for mathamatical operations
+import numpy as np
 
 df = pd.read_csv(r'C:\Users\kiran\OneDrive\Desktop\crypto prediction\main_venkat\Cryptocurrency-Price-Prediction\Excel DB\Crypto_data_info.csv')
 df.head()                        #Shows the initial rows of the DataFrame, offering a quick view of the dataset.
@@ -95,6 +96,11 @@ plt.figure(num="Scatter Plot")
 for index, val in enumerate(['open', 'high', 'low', 'close', 'volume']):
     plt.subplot(3,2,index+1)
     plt.scatter(df.loc[df['crypto_name'] == 'Bitcoin'][val], df.loc[df['crypto_name'] == 'Bitcoin']['marketCap'])
+
+    # bestfit line logic
+    # m, c = np.polyfit(df.loc[df['crypto_name'] == 'Bitcoin'][val], df.loc[df['crypto_name'] == 'Bitcoin']['marketCap'],deg= 1)
+    # plt.plot(df.loc[df['crypto_name'] == 'Bitcoin'][val], m*df.loc[df['crypto_name'] == 'Bitcoin'][val]+c, color = 'red')
+
     plt.xlabel(val)
     plt.ylabel('marketCap')
     plt.title(f'Scatter plot between {val} and marketcap ')
@@ -104,13 +110,6 @@ plt.subplots_adjust(left=0.1,
                     top=0.9, 
                     wspace=0.1, 
                     hspace=0.4)
-
-#==================== NOTE =====================
-#
-# from the above figure:- 5 in plot betweeen marketCap and volumn
-# the reason for volumne is having correlation 0.7 is because of an outliear
-#
-#==================== NOTE =====================
 
 #boxplot to check outliers with whisker_length(whis) of 1.5(default value)
 plt.figure(num="Box plot")
