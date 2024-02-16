@@ -127,3 +127,9 @@ plt.show()
 #checking null values in Bitcoin dataset
 print(df.loc[df['crypto_name'] == 'Bitcoin'].describe(include='all'))
 print(df.loc[df['crypto_name'] == 'Bitcoin'].isnull().sum())
+
+df['open_close'] = df['open'] - df['close']
+df['low_high'] = df['low'] - df['high']
+df['target'] = np.where(df['close'].shift(-1) > df['close'], 1, 0)
+
+df.tail()
