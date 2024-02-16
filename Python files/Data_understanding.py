@@ -21,6 +21,21 @@ print(df.isnull().sum())
 # Define features for future use
 features = ['open', 'high', 'low', 'close']
 
+# Use subplots to visualize feature distributions
+plt.subplots(figsize=(20, 10))
+for i, col in enumerate(features):
+    plt.subplot(2, 2, i + 1)
+    sb.distplot(df[col])
+plt.show()
+
+# Extract Year, Month, and Day from the Date column
+df['year'] = df['date'].dt.year
+df['month'] = df['date'].dt.month
+df['day'] = df['date'].dt.day
+print(df.head())
+
+# Group DataFrame by year and calculate mean for each group
+data_grouped = df.groupby('year').mean()
 
 #This creates a figure and axis grid with a specific size of 20 inches in width and 10 inches in height.
 plt.subplots(figsize=(20, 10))
