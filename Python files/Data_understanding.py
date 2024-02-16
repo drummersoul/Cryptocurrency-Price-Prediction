@@ -98,9 +98,10 @@ sb.heatmap(corr, annot=True)
 plt.title("Correlation HeatMap for Bitcoin")
 
 
+visualize_cols = ['open', 'high', 'low', 'volume', 'marketCap']
 #ploting graph to check correlation
 plt.figure(num="Scatter Plot")
-for index, val in enumerate(['open', 'high', 'low', 'volume', 'marketCap']):
+for index, val in enumerate(visualize_cols):
     plt.subplot(3,2,index+1)
     plt.scatter(df.loc[df['crypto_name'] == 'Bitcoin'][val], df.loc[df['crypto_name'] == 'Bitcoin']['close'])
 
@@ -120,7 +121,7 @@ plt.subplots_adjust(left=0.1,
 
 #boxplot to check outliers with whisker_length(whis) of 1.5(default value)
 plt.figure(num="Box plot")
-for index, val in enumerate(['open', 'high', 'low', 'close', 'volume', 'marketCap']):
+for index, val in enumerate(visualize_cols):
     plt.subplot(3,2,index+1)
     plt.boxplot(pd.array(df.loc[df['crypto_name'] == 'Bitcoin'][val]), vert = False)
     plt.title(f'Box plot of {val} ')
