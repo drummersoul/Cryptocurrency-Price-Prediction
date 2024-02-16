@@ -141,3 +141,9 @@ df['low_high'] = df['low'] - df['high']
 df['target'] = np.where(df['close'].shift(-1) > df['close'], 1, 0)
 
 df.tail()
+
+df['MA7'] = df['close'].rolling(window=7).mean()
+df['MA30'] = df['close'].rolling(window=30).mean()
+df['Price_Change'] = df['close'].diff()
+
+df.info()
