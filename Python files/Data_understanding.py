@@ -73,3 +73,11 @@ plt.xlabel('open price') #label for open boxplot
 sb.boxplot(data=df['open'], showfliers=True ,orient='h') #df reads column open ,showflies shows outliers and orientation will be horizontal(h) or vertical(v)
 #Displays the plot
 plt.show()
+
+#Correlation for bitcoin crypto 
+plt.figure(num="Correlation HeatMap")
+print(df.info())
+corr = df.loc[df['crypto_name'] == 'Bitcoin'].iloc[:,1:].corr(numeric_only=True).round(2)
+sb.heatmap(corr, annot=True)
+plt.title("Correlation HeatMap for BitCoin")
+plt.show()
