@@ -1,6 +1,6 @@
 import os
 import pandas as pd 
-
+from utils.utils import get_data
 # Get the current working directory
 current_directory = os.getcwd()
 
@@ -8,13 +8,14 @@ current_directory = os.getcwd()
 csv_file_location = os.path.join(current_directory, "Excel DB", "Crypto_data_info.csv")
 
 # Check if the file exists
-if os.path.exists(csv_file_location):
-    df = pd.read_csv(csv_file_location)
-    print("File successfully loaded.")
-else:
-    print(f"File not found at location: {csv_file_location}")
+# if os.path.exists(csv_file_location):
+#     df = pd.read_csv(csv_file_location)
+#     print("File successfully loaded.")
+# else:
+#     print(f"File not found at location: {csv_file_location}")
 
 # Printing dataframe
+df = get_data('Crypto_data_info.csv')
 print(df.head(10))
 print(df)
 

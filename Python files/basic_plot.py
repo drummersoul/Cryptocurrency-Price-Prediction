@@ -1,5 +1,5 @@
 import pandas as pd
-import matplotlib.pyplot as py
+import matplotlib.pyplot as plt
 
 
 #get data from file...
@@ -59,3 +59,30 @@ print(bc_df.describe())
 # print(pd.to_datetime(df['date']).dt.year) #to get year in a date objects
 
 print(bc_df.isnull().sum())
+
+#boxplot to check outliers
+plt.figure()
+for index, val in enumerate(['open', 'high', 'low', 'close', 'volume', 'marketCap']):
+    plt.subplot(3,2,index+1)
+    plt.boxplot(pd.array(df.loc[df['crypto_name'] == 'Bitcoin'][val]), vert=0)
+    plt.title(f'Box plot of {val} ')
+plt.subplots_adjust(left=0.1,
+                    bottom=0.08, 
+                    right=0.9, 
+                    top=0.9, 
+                    wspace=0.1, 
+                    hspace=0.4)
+
+# trying plot for different whisker lenght
+plt.figure()
+for index, val in enumerate(['open', 'high', 'low', 'close', 'volume', 'marketCap']):
+    plt.subplot(3,2,index+1)
+    plt.boxplot(pd.array(df.loc[df['crypto_name'] == 'Bitcoin'][val]), vert=0, whis=3.5)
+    plt.title(f'Box plot of {val} ')
+plt.subplots_adjust(left=0.1,
+                    bottom=0.08, 
+                    right=0.9, 
+                    top=0.9, 
+                    wspace=0.1, 
+                    hspace=0.4)
+plt.show()
