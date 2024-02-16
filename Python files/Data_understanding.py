@@ -1,35 +1,26 @@
-import pandas as pd              #Brings in the Pandas library and aliases it as 'pd' for data manipulation.
-import matplotlib.pyplot as plt  #Importing Matplotlib for plotting the data
-import seaborn as sb             #Import seaborn for plotting graphs or make visualizations
-import math as math              #import for mathamatical operations
-import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sb
 
-df = pd.read_csv(r'C:\Users\kiran\OneDrive\Desktop\crypto prediction\main_venkat\Cryptocurrency-Price-Prediction\Excel DB\Crypto_data_info.csv')
-df.head()                        #Shows the initial rows of the DataFrame, offering a quick view of the dataset.
-df.shape                         #Provides the number of rows and columns in the DataFrame, indicating its size.
-df.describe()                    #Presents summary statistics for numerical columns, revealing central tendencies and data spread.
+# Read dataset and display basic information
+df = pd.read_csv('dataset.csv')
+print(df.head())
+print(df.shape)
+print(df.describe())
 
-print(df)
-
-# Set the figure size to 10x5 inches.
-plt.figure(figsize=(10,5))
-
-# Plot the 'close' column from the DataFrame.
-plt.plot(df['close'])  
-
-# Set the title of the plot with a fontsize of 15.
-plt.title('Bitcoin Close price.', fontsize=15)
-
-# Label the y-axis as 'Price in dollars.'
-plt.ylabel('Price in dollars.')  
-
-#display the plot
+# Plot historical close price of Bitcoin
+plt.figure(figsize=(10, 5))
+plt.plot(df['close'])
+plt.title('Bitcoin Close Price', fontsize=15)
+plt.ylabel('Price in Dollars')
 plt.show()
 
+# Display total null values from all columns
 print(df.isnull().sum())
 
-#We create a list named features that will contain the features or columns that we want to explore
+# Define features for future use
 features = ['open', 'high', 'low', 'close']
+
 
 #This creates a figure and axis grid with a specific size of 20 inches in width and 10 inches in height.
 plt.subplots(figsize=(20, 10))
