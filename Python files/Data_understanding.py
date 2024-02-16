@@ -1,9 +1,10 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sb
+from utils.utils import get_data
 
 # Read dataset and display basic information
-df = pd.read_csv('dataset.csv')
+df = get_data('Crypto_data_info.csv')
 print(df.head())
 print(df.shape)
 print(df.describe())
@@ -45,7 +46,7 @@ for i, col in enumerate(features):
     plt.subplot(2, 2, i + 1)
     # Plot a distribution plot (histogram and kernel density estimate) for the current feature
     #with this we can visualize the distribution of each feature data
-    sb.distplot(df[col])
+    sb.displot(df[col])
 #This displays the plot grid created by the previous subplots.
 plt.show()
 
@@ -88,3 +89,51 @@ plt.xlabel('open price') #label for open boxplot
 sb.boxplot(data=df['open'], showfliers=True ,orient='h') #df reads column open ,showflies shows outliers and orientation will be horizontal(h) or vertical(v)
 #Displays the plot
 plt.show()
+
+#Correlation for bitcoin crypto 
+plt.figure(num="Correlation HeatMap")
+print(df.info())
+corr = df.loc[df['crypto_name'] == 'Bitcoin'].iloc[:,1:].corr(method='spearman', numeric_only=True).round(2)
+sb.heatmap(corr, annot=True)
+plt.title("Correlation HeatMap for Bitcoin")
+
+
+visualize_cols = ['open', 'high', 'low', 'volume', 'marketCap']
+#ploting graph to check correlation
+plt.figure(num="Scatter Plot")
+for index, val in enumerate(visualize_cols):
+    plt.subplot(3,2,index+1)
+    plt.scatter(df.loc[df['crypto_name'] == 'Bitcoin'][val], df.loc[df['crypto_name'] == 'Bitcoin']['close'])
+
+    # bestfit line logic
+    # m, c = np.polyfit(df.loc[df['crypto_name'] == 'Bitcoin'][val], df.loc[df['crypto_name'] == 'Bitcoin']['marketCap'],deg= 1)
+    # plt.plot(df.loc[df['crypto_name'] == 'Bitcoin'][val], m*df.loc[df['crypto_name'] == 'Bitcoin'][val]+c, color = 'red')
+
+    plt.xlabel(val)
+    plt.ylabel('close')
+    plt.title(f'Scatter plot between {val} and close ')
+plt.subplots_adjust(left=0.1,
+                    bottom=0.08, 
+                    right=0.9, 
+                    top=0.9, 
+                    wspace=0.1, 
+                    hspace=0.4)
+
+#boxplot to check outliers with whisker_length(whis) of 1.5(default value)
+plt.figure(num="Box plot")
+for index, val in enumerate(visualize_cols):
+    plt.subplot(3,2,index+1)
+    plt.boxplot(pd.array(df.loc[df['crypto_name'] == 'Bitcoin'][val]), vert = False)
+    plt.title(f'Box plot of {val} ')
+
+plt.subplots_adjust(left=0.1,
+                    bottom=0.08, 
+                    right=0.9, 
+                    top=0.9, 
+                    wspace=0.1, 
+                    hspace=0.4)
+plt.show()
+
+#checking null values in Bitcoin dataset
+print(df.loc[df['crypto_name'] == 'Bitcoin'].describe(include='all'))
+print(df.loc[df['crypto_name'] == 'Bitcoin'].isnull().sum())
