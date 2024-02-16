@@ -135,3 +135,9 @@ plt.subplots_adjust(left=0.1,
                     wspace=0.1,
                     hspace=0.4)
 plt.show()
+
+df['open_close'] = df['open'] - df['close']
+df['low_high'] = df['low'] - df['high']
+df['target'] = np.where(df['close'].shift(-1) > df['close'], 1, 0)
+
+df.tail()
