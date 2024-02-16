@@ -22,22 +22,6 @@ print(df.isnull().sum())
 # Define features for future use
 features = ['open', 'high', 'low', 'close']
 
-# Use subplots to visualize feature distributions
-plt.subplots(figsize=(20, 10))
-for i, col in enumerate(features):
-    plt.subplot(2, 2, i + 1)
-    sb.distplot(df[col])
-plt.show()
-
-# Extract Year, Month, and Day from the Date column
-df['year'] = df['date'].dt.year
-df['month'] = df['date'].dt.month
-df['day'] = df['date'].dt.day
-print(df.head())
-
-# Group DataFrame by year and calculate mean for each group
-data_grouped = df.groupby('year').mean()
-
 #This creates a figure and axis grid with a specific size of 20 inches in width and 10 inches in height.
 plt.subplots(figsize=(20, 10))
 # Iterate over each feature in the 'features' list
@@ -46,7 +30,7 @@ for i, col in enumerate(features):
     plt.subplot(2, 2, i + 1)
     # Plot a distribution plot (histogram and kernel density estimate) for the current feature
     #with this we can visualize the distribution of each feature data
-    sb.displot(df[col])
+    sb.distplot(df[col])
 #This displays the plot grid created by the previous subplots.
 plt.show()
 
@@ -67,7 +51,7 @@ print(df.head())
 
 # Group the DataFrame 'df' by the 'year' column and calculate the mean of each numeric column for each group
 #numeric_only is to calculate mean only for numbers
-data_grouped = df.groupby(['year']).mean(numeric_only=True)
+data_grouped = df.groupby(by=['year']).mean(numeric_only=True)
 print(data_grouped)
 
 # Create a new figure and subplots with a specific size (20x10 inches)
@@ -81,8 +65,9 @@ for i, col in enumerate(['open', 'high', 'low', 'close']):
     # Plot a bar chart for the current column using the grouped data
     data_grouped[col].plot.bar()
 
-# Display the plot
+#Displays the plot
 plt.show()
+
 # This are the box plots for open..similar can be done for close,low,high.
 plt.title('This is a boxplot of Crypto Open Prices includes outliers')# This is the Title for Boxplot
 plt.xlabel('open price') #label for open boxplot
@@ -90,13 +75,18 @@ sb.boxplot(data=df['open'], showfliers=True ,orient='h') #df reads column open ,
 #Displays the plot
 plt.show()
 
-#Correlation for bitcoin crypto 
-plt.figure(num="Correlation HeatMap")
-print(df.info())
+#Correlation for Bitcoin crypto 
+plt.figure(num="Correlation HeatMap For Bitcoin")
+#Correlation for bitcoin crypto plt.figure(num="Correlation HeatMap For BitCoin")
 corr = df.loc[df['crypto_name'] == 'Bitcoin'].iloc[:,1:].corr(method='spearman', numeric_only=True).round(2)
 sb.heatmap(corr, annot=True)
 plt.title("Correlation HeatMap for Bitcoin")
 
+#Correlation for Litecoin crypto 
+plt.figure(num="Correlation HeatMap For Litecoin")
+corr = df.loc[df['crypto_name'] == 'Litecoin'].iloc[:,1:].corr(method='spearman', numeric_only=True).round(2)
+sb.heatmap(corr, annot=True)
+plt.title("Correlation HeatMap for Litecoin")
 
 visualize_cols = ['open', 'high', 'low', 'volume', 'marketCap']
 #ploting graph to check correlation
