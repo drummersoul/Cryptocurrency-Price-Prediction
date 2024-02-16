@@ -31,7 +31,7 @@ for i, col in enumerate(features):
     plt.subplot(2, 2, i + 1)
     # Plot a distribution plot (histogram and kernel density estimate) for the current feature
     #with this we can visualize the distribution of each feature data
-    sb.distplot(df[col])
+    sb.displot(df[col])
 #This displays the plot grid created by the previous subplots.
 plt.show()
 
@@ -80,7 +80,7 @@ plt.figure(num="Correlation HeatMap")
 print(df.info())
 corr = df.loc[df['crypto_name'] == 'Bitcoin'].iloc[:,1:].corr(method='spearman', numeric_only=True).round(2)
 sb.heatmap(corr, annot=True)
-plt.title("Correlation HeatMap for BitCoin")
+plt.title("Correlation HeatMap for Bitcoin")
 
 
 #ploting graph to check correlation
