@@ -4,20 +4,23 @@ import seaborn as sb
 from utils.utils import get_data, get_specific_data
 import warnings  # Adding warning ignore to avoid issues with distplot
 import numpy as np
+
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score, classification_report
+from graphs import Graphs
 
 warnings.filterwarnings('ignore')
 
 # Read dataset and display basic information
 df = get_data('Crypto_data_info.csv')
 
-print(df.shape)
-df.describe(include="all")
+#instantiating Graph class
+graph = Graphs()
 
 # Filtering data for only Litecoin
 df = get_specific_data(df, 'Litecoin')
+print(df.shape)
 
 # Removing columns we wont use because they have only null values
 df = df.drop(columns=["volume"])
@@ -26,20 +29,11 @@ df = df.drop(columns=["volume"])
 df['date'] = pd.to_datetime(df['date'])
 
 # Plot historical close price
-plt.figure(figsize=(10, 5))
-plt.plot(df['close'])
-plt.title('Crypto Close Price', fontsize=15)
-plt.ylabel('Price in Dollars')
-plt.show()
+graph.basicPlot(y = df['close'], title='Crypto Close Price', y_label= 'Price in Dollars')
 
 # Define features for future use
 features = ['open', 'high', 'low', 'close']
-
-plt.subplots(figsize=(10, 5))
-for i, col in enumerate(features):
-    plt.subplot(2, 2, i + 1)
-    sb.distplot(df[col])
-plt.show()
+graph.distPlotWithSubPlot(df, features = features, rows = 2, cols = 2)
 
 # Extract the year from the 'date' column using the dt accessor in pandas
 df['year'] = df['date'].dt.year
@@ -56,32 +50,9 @@ print(df.head())
 data_grouped = df.groupby(by=['year']).mean(numeric_only=True)
 print(data_grouped)
 
-# Create a new figure and subplots with a specific size (20x10 inches)
-plt.subplots(figsize=(10, 5))
-
-# Iterate over each column ('open', 'high', 'low', 'close') and its corresponding index
-for i, col in enumerate(['open', 'high', 'low', 'close']):
-    # Create subplots in a 2x2 grid, with each subplot representing one of the numeric columns
-    plt.subplot(2, 2, i + 1)
-
-    # Plot a bar chart for the current column using the grouped data
-    data_grouped[col].plot.bar()
-plt.show()
-
-plt.title('This is a boxplot of Crypto Open Prices includes outliers')  # This is the Title for Boxplot
-plt.xlabel('open price')  # label for open boxplot
-sb.boxplot(data=df['open'], showfliers=True,
-           orient='h')
-plt.show()
-
-'''
-# Correlation for Bitcoin crypto
-plt.figure(num="Correlation HeatMap For Bitcoin")
-# Correlation for bitcoin crypto plt.figure(num="Correlation HeatMap For BitCoin")
-corr = df.loc[df['crypto_name'] == 'Bitcoin'].iloc[:, 1:].corr(method='spearman', numeric_only=True).round(2)
-sb.heatmap(corr, annot=True)
-plt.title("Correlation HeatMap for Bitcoin")
-'''
+bar_plot_features = ['open', 'high', 'low', 'close']
+# Plot a bar chart for the current column using the grouped data
+graph.barplotWithSubplot(data_grouped, bar_plot_features, 2, 2)
 
 df['open_close'] = df['open'] - df['close']
 df['low_high'] = df['low'] - df['high']
@@ -92,46 +63,15 @@ sub_df = df[['open', 'high', 'low', 'close', 'marketCap', 'open_close', 'low_hig
 sub_df.head()
 
 # Correlation for Litecoin crypto
-plt.figure(num="Correlation HeatMap For Litecoin")
-corr = df.iloc[:, 1:].corr(method='spearman', numeric_only=True).round(2)
-sb.heatmap(corr, annot=True)
-plt.title("Correlation HeatMap for Litecoin")
+graph.graphCorrelation(df.iloc[:, 1:], "Correlation HeatMap for Litecoin")
 
 visualize_cols = ['open', 'high', 'low', 'marketCap']
+
 # ploting graph to check correlation
-plt.figure(num="Scatter Plot")
-for index, val in enumerate(visualize_cols):
-    plt.subplot(3, 2, index + 1)
-    plt.scatter(df[val], df['close'])
-
-    # bestfit line logic m, c = np.polyfit(df.loc[df['crypto_name'] == 'Bitcoin'][val], df.loc[df['crypto_name'] ==
-    # 'Bitcoin']['marketCap'],deg= 1) plt.plot(df.loc[df['crypto_name'] == 'Bitcoin'][val], m*df.loc[df[
-    # 'crypto_name'] == 'Bitcoin'][val]+c, color = 'red')
-
-    plt.xlabel(val)
-    plt.ylabel('close')
-    plt.title(f'Scatter plot between {val} and close ')
-plt.subplots_adjust(left=0.1,
-                    bottom=0.08,
-                    right=0.9,
-                    top=0.9,
-                    wspace=0.1,
-                    hspace=0.4)
+graph.scatterPlotWithSubPlot(df, 'close', visualize_cols, 2, 2)
 
 # boxplot to check outliers with whisker_length(whis) of 1.5(default value)
-plt.figure(num="Box plot")
-for index, val in enumerate(visualize_cols):
-    plt.subplot(3, 2, index + 1)
-    plt.boxplot(pd.array(df[val]), vert=False)
-    plt.title(f'Box plot of {val} ')
-
-plt.subplots_adjust(left=0.1,
-                    bottom=0.08,
-                    right=0.9,
-                    top=0.9,
-                    wspace=0.1,
-                    hspace=0.4)
-plt.show()
+graph.boxPlotWithSubplot(df, visualize_cols, 2, 2)
 
 df['MA7'] = df['close'].rolling(window=7).mean()
 df['MA30'] = df['close'].rolling(window=30).mean()
