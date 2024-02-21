@@ -1,22 +1,20 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sb
-from utils.utils import get_data
+from utils.utils import get_data, get_specific_data
 import warnings  # Adding warning ignore to avoid issues with distplot
 import numpy as np
 
 warnings.filterwarnings('ignore')
 
 # Read dataset and display basic information
-# df = get_data('Crypto_data_info.csv')
-df = pd.read_csv('Crypto_data.csv')
+df = get_data('Crypto_data_info.csv')
 
-df.head()
 print(df.shape)
 df.describe(include="all")
 
 # Filtering data for only Litecoin
-df = df.loc[df['crypto_name'] == 'Litecoin']
+df = get_specific_data(df, 'Litecoin')
 df.head()
 
 # Removing columns we wont use because they have only null values
@@ -105,7 +103,7 @@ visualize_cols = ['open', 'high', 'low', 'marketCap']
 plt.figure(num="Scatter Plot")
 for index, val in enumerate(visualize_cols):
     plt.subplot(3, 2, index + 1)
-    plt.scatter(df.loc[df['crypto_name'] == 'Litecoin'][val], df.loc[df['crypto_name'] == 'Litecoin']['close'])
+    plt.scatter(df[val], df['close'])
 
     # bestfit line logic m, c = np.polyfit(df.loc[df['crypto_name'] == 'Bitcoin'][val], df.loc[df['crypto_name'] ==
     # 'Bitcoin']['marketCap'],deg= 1) plt.plot(df.loc[df['crypto_name'] == 'Bitcoin'][val], m*df.loc[df[
@@ -125,7 +123,7 @@ plt.subplots_adjust(left=0.1,
 plt.figure(num="Box plot")
 for index, val in enumerate(visualize_cols):
     plt.subplot(3, 2, index + 1)
-    plt.boxplot(pd.array(df.loc[df['crypto_name'] == 'Litecoin'][val]), vert=False)
+    plt.boxplot(pd.array(df[val]), vert=False)
     plt.title(f'Box plot of {val} ')
 
 plt.subplots_adjust(left=0.1,

@@ -16,9 +16,11 @@ def get_data(file_name):
 
     # Check if the file exists
     if os.path.exists(path):
-        df = pd.read_csv(path)
-        print("File successfully loaded.")
         dataframe = pd.read_csv(path)
+        print("File successfully loaded.")
         return dataframe
     else:
         print(f"File not found at location: {path}")
+
+def get_specific_data(data_frame: pd, crypto_name:str):
+    return data_frame.loc[data_frame['crypto_name'] == crypto_name]
