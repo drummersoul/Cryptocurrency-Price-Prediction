@@ -11,7 +11,7 @@ warnings.filterwarnings('ignore')
 # Read dataset and display basic information
 df = get_data('Crypto_data_info.csv')
 
-#instantiating Graph
+#instantiating Graph class
 graph = Graphs()
 
 # Filtering data for only Litecoin
@@ -50,13 +50,6 @@ bar_plot_features = ['open', 'high', 'low', 'close']
 # Plot a bar chart for the current column using the grouped data
 graph.barplotWithSubplot(data_grouped, bar_plot_features, 2, 2)
 
-
-plt.title('This is a boxplot of Crypto Open Prices includes outliers')  # This is the Title for Boxplot
-plt.xlabel('open price')  # label for open boxplot
-sb.boxplot(data=df['open'], showfliers=True,
-           orient='h')
-plt.show()
-
 df['open_close'] = df['open'] - df['close']
 df['low_high'] = df['low'] - df['high']
 df['target'] = np.where(df['close'].shift(-1) > df['close'], 1, 0)
@@ -66,46 +59,15 @@ sub_df = df[['open', 'high', 'low', 'close', 'marketCap', 'open_close', 'low_hig
 sub_df.head()
 
 # Correlation for Litecoin crypto
-plt.figure(num="Correlation HeatMap For Litecoin")
-corr = df.iloc[:, 1:].corr(method='spearman', numeric_only=True).round(2)
-sb.heatmap(corr, annot=True)
-plt.title("Correlation HeatMap for Litecoin")
+graph.graphCorrelation(df.iloc[:, 1:], "Correlation HeatMap for Litecoin")
 
 visualize_cols = ['open', 'high', 'low', 'marketCap']
+
 # ploting graph to check correlation
-plt.figure(num="Scatter Plot")
-for index, val in enumerate(visualize_cols):
-    plt.subplot(3, 2, index + 1)
-    plt.scatter(df[val], df['close'])
-
-    # bestfit line logic m, c = np.polyfit(df.loc[df['crypto_name'] == 'Bitcoin'][val], df.loc[df['crypto_name'] ==
-    # 'Bitcoin']['marketCap'],deg= 1) plt.plot(df.loc[df['crypto_name'] == 'Bitcoin'][val], m*df.loc[df[
-    # 'crypto_name'] == 'Bitcoin'][val]+c, color = 'red')
-
-    plt.xlabel(val)
-    plt.ylabel('close')
-    plt.title(f'Scatter plot between {val} and close ')
-plt.subplots_adjust(left=0.1,
-                    bottom=0.08,
-                    right=0.9,
-                    top=0.9,
-                    wspace=0.1,
-                    hspace=0.4)
+graph.scatterPlotWithSubPlot(df, 'close', visualize_cols, 2, 2)
 
 # boxplot to check outliers with whisker_length(whis) of 1.5(default value)
-plt.figure(num="Box plot")
-for index, val in enumerate(visualize_cols):
-    plt.subplot(3, 2, index + 1)
-    plt.boxplot(pd.array(df[val]), vert=False)
-    plt.title(f'Box plot of {val} ')
-
-plt.subplots_adjust(left=0.1,
-                    bottom=0.08,
-                    right=0.9,
-                    top=0.9,
-                    wspace=0.1,
-                    hspace=0.4)
-plt.show()
+graph.boxPlotWithSubplot(df, visualize_cols, 2, 2)
 
 df['MA7'] = df['close'].rolling(window=7).mean()
 df['MA30'] = df['close'].rolling(window=30).mean()
