@@ -4,6 +4,9 @@ import seaborn as sb
 from utils.utils import get_data, get_specific_data
 import warnings  # Adding warning ignore to avoid issues with distplot
 import numpy as np
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score, classification_report
 
 warnings.filterwarnings('ignore')
 
@@ -134,3 +137,27 @@ df['MA7'] = df['close'].rolling(window=7).mean()
 df['MA30'] = df['close'].rolling(window=30).mean()
 df['Price_Change'] = df['close'].diff()
 
+X = df[['open', 'high', 'low', 'marketCap', 'year', 'month', 'day']]
+y = df['close']
+
+X_test, X_train, y_test, y_train = train_test_split(X, y, test_size=0.1, random_state=2022)
+
+print(f"X_train: {X_train.shape}")
+print(f"X_test: {X_test.shape}")
+print(f"y_train: {y_train.shape}")
+print(f"y_test: {y_test.shape}")
+
+y_train_class = (y_train.shift(-1) > y_train).astype(int)
+y_test_class = (y_test.shift(-1) > y_test).astype(int)
+
+logistic_reg = LogisticRegression()
+logistic_reg.fit(X_train, y_train_class)
+
+train_pred = logistic_reg.predict(X_train)
+test_pred = logistic_reg.predict(X_test)
+
+train_acc = accuracy_score(y_train_class, train_pred)
+test_acc = accuracy_score(y_test_class, test_pred)
+
+print(f'Accuracy of Training: {train_acc}')
+print(f'Accuracy of Testing: {test_acc}')
