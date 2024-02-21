@@ -42,7 +42,7 @@ class Graphs:
                 plt.xlabel(fch)
         else:
             if(rows * col < len(features)):
-                raise Exception("Invalid SubPlot Size")
+                rows , col = self.getRowAndColumnSize(features)
             for index, fch in enumerate(features):
                 plt.subplot(rows, col, index+1)
                 sb.distplot(df[fch])
@@ -60,7 +60,7 @@ class Graphs:
                 plt.xlabel(fch)
         else:
             if(rows * col < len(features)):
-                raise Exception("Invalid SubPlot Size")
+                rows , col = self.getRowAndColumnSize(features)
             for index, fch in enumerate(features):
                 plt.subplot(rows, col, index+1)
                 df[fch].plot.bar()
@@ -72,7 +72,8 @@ class Graphs:
         plt.figure("Scatter Plot's with subPlot")
         if(len(features) == 0):
             features = df.select_dtypes(include=np.number).columns.tolist()
-            features.remove(target)
+            if(target in features):
+                features.remove(target)
             for index, fch in enumerate(features):
                 plt.subplot(math.ceil(len(features)/2), 2, index+1)
                 plt.scatter(df[fch], df[target])
@@ -81,7 +82,7 @@ class Graphs:
                 plt.title(f'Scatter plot between {fch} and {target} ')
         else:
             if(rows * col < len(features)):
-                raise Exception("Invalid SubPlot Size")
+                rows , col = self.getRowAndColumnSize(features)
             for index, fch in enumerate(features):
                 plt.subplot(rows, col, index+1)
                 plt.scatter(df[fch], df[target])
@@ -96,7 +97,8 @@ class Graphs:
         plt.figure("Scatter Plot's with subPlot and bestfitline")
         if(len(features) == 0):
             features = df.select_dtypes(include=np.number).columns.tolist()
-            features.remove(target)
+            if(target in features):
+                features.remove(target)
             for index, fch in enumerate(features):
                 plt.subplot(math.ceil(len(features)/2), 2, index+1)
                 plt.scatter(df[fch], df[target])
@@ -107,7 +109,7 @@ class Graphs:
                 plt.title(f'Scatter plot between {fch} and {target}  and bestfitline')
         else:
             if(rows * col < len(features)):
-                raise Exception("Invalid SubPlot Size")
+                rows , col = self.getRowAndColumnSize(features)
             for index, fch in enumerate(features):
                 plt.subplot(rows, col, index+1)
                 plt.scatter(df[fch], df[target])
@@ -130,10 +132,16 @@ class Graphs:
                 plt.title(f'boxplot of {fch}')
         else:
             if(rows * col < len(features)):
-                raise Exception("Invalid SubPlot Size")
+                rows , col = self.getRowAndColumnSize(features)
             for index, fch in enumerate(features):
                 plt.subplot(rows, col, index+1)
                 plt.boxplot(df[fch], vert=False, whis=wisker_length)
                 plt.title(f'boxplot of {fch}')
         plt.subplots_adjust(left=0.1, bottom=0.08, right=0.9, top=0.9, wspace=0.1, hspace=0.4)
         plt.show()
+
+
+    def getRowAndColumnSize(self, features : list):
+        rows = math.ceil(len(features)/2)
+        col = 2
+        return (rows, col)

@@ -10,4 +10,4 @@ grp = Graphs()
 
 
 print(type('close'))
-grp.boxPlotWithSubplot(df.loc[df['crypto_name'] == 'Bitcoin'])
+grp.boxPlotWithSubplot(df.loc[df['crypto_name'] == 'Bitcoin'], ['close', 'high'])
