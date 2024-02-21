@@ -4,17 +4,19 @@ import seaborn as sb
 from utils.utils import get_data, get_specific_data
 import warnings  # Adding warning ignore to avoid issues with distplot
 import numpy as np
+from graphs import Graphs
 
 warnings.filterwarnings('ignore')
 
 # Read dataset and display basic information
 df = get_data('Crypto_data_info.csv')
 
-print(df.shape)
-df.describe(include="all")
+#instantiating Graph
+graph = Graphs()
 
 # Filtering data for only Litecoin
 df = get_specific_data(df, 'Litecoin')
+print(df.shape)
 
 # Removing columns we wont use because they have only null values
 df = df.drop(columns=["volume"])
@@ -23,20 +25,11 @@ df = df.drop(columns=["volume"])
 df['date'] = pd.to_datetime(df['date'])
 
 # Plot historical close price
-plt.figure(figsize=(10, 5))
-plt.plot(df['close'])
-plt.title('Crypto Close Price', fontsize=15)
-plt.ylabel('Price in Dollars')
-plt.show()
+graph.basicPlot(y = df['close'], title='Crypto Close Price', y_label= 'Price in Dollars')
 
 # Define features for future use
 features = ['open', 'high', 'low', 'close']
-
-plt.subplots(figsize=(10, 5))
-for i, col in enumerate(features):
-    plt.subplot(2, 2, i + 1)
-    sb.distplot(df[col])
-plt.show()
+graph.distPlotWithSubPlot(df, features = features, rows = 2, cols = 2)
 
 # Extract the year from the 'date' column using the dt accessor in pandas
 df['year'] = df['date'].dt.year
@@ -53,9 +46,8 @@ print(df.head())
 data_grouped = df.groupby(by=['year']).mean(numeric_only=True)
 print(data_grouped)
 
-# Create a new figure and subplots with a specific size (20x10 inches)
-plt.subplots(figsize=(10, 5))
-
+bar_plot_features = ['open', 'high', 'low', 'close']
+graph.barplotWithSubplot(df, bar_plot_features, 2, 2)
 # Iterate over each column ('open', 'high', 'low', 'close') and its corresponding index
 for i, col in enumerate(['open', 'high', 'low', 'close']):
     # Create subplots in a 2x2 grid, with each subplot representing one of the numeric columns

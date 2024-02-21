@@ -22,5 +22,5 @@ def get_data(file_name):
     else:
         print(f"File not found at location: {path}")
 
-def get_specific_data(data_frame: pd, crypto_name:str):
+def get_specific_data(data_frame: pd.DataFrame, crypto_name:str):
     return data_frame.loc[data_frame['crypto_name'] == crypto_name]
