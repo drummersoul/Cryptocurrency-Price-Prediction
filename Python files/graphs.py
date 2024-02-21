@@ -49,6 +49,7 @@ class Graphs:
         plt.figure("BarPlot's with subPlot")
         if(len(features) == 0):
             features = df.select_dtypes(include=np.number).columns.tolist()
+            # Iterate over each column and its corresponding index
             for index, fch in enumerate(features):
                 plt.subplot(math.ceil(len(features)/2), 2, index+1)
                 df[fch].plot.bar()
@@ -56,7 +57,9 @@ class Graphs:
         else:
             if(rows * cols < len(features)):
                 rows , cols = self.getRowAndColumnSize(features)
+            # Iterate over each column and its corresponding index
             for index, fch in enumerate(features):
+                # Create subplots in a rowsxcols grid, with each subplot representing one of the numeric columns
                 plt.subplot(rows, cols, index+1)
                 df[fch].plot.bar()
                 plt.xlabel(fch)
@@ -117,7 +120,7 @@ class Graphs:
         plt.show()
 
 
-    def boxPlotWithSubplot(self, df: pd.DataFrame, features: list = [],  rows: int = 0, col: int = 0, wisker_length : float = 1.5):
+    def boxPlotWithSubplot(self, df: pd.DataFrame, features: list = [],  rows: int = 0, cols: int = 0, wisker_length : float = 1.5):
         plt.figure("Boxplot's with subPlot")
         if(len(features) == 0):
             features = df.select_dtypes(include=np.number).columns.tolist()
@@ -126,10 +129,10 @@ class Graphs:
                 plt.boxplot(df[fch], vert=False, whis=wisker_length)
                 plt.title(f'boxplot of {fch}')
         else:
-            if(rows * col < len(features)):
-                rows , col = self.getRowAndColumnSize(features)
+            if(rows * cols < len(features)):
+                rows , cols = self.getRowAndColumnSize(features)
             for index, fch in enumerate(features):
-                plt.subplot(rows, col, index+1)
+                plt.subplot(rows, cols, index+1)
                 plt.boxplot(df[fch], vert=False, whis=wisker_length)
                 plt.title(f'boxplot of {fch}')
         plt.subplots_adjust(left=0.1, bottom=0.08, right=0.9, top=0.9, wspace=0.1, hspace=0.4)
