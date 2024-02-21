@@ -15,15 +15,12 @@ df.describe(include="all")
 
 # Filtering data for only Litecoin
 df = get_specific_data(df, 'Litecoin')
-df.head()
 
 # Removing columns we wont use because they have only null values
 df = df.drop(columns=["volume"])
-df.head()
 
 # Conver date object type to date type
 df['date'] = pd.to_datetime(df['date'])
-df.info()
 
 # Plot historical close price
 plt.figure(figsize=(10, 5))
@@ -87,7 +84,6 @@ df['open_close'] = df['open'] - df['close']
 df['low_high'] = df['low'] - df['high']
 df['target'] = np.where(df['close'].shift(-1) > df['close'], 1, 0)
 
-df.tail()
 # Keeping the columns for heatmap exploration
 sub_df = df[['open', 'high', 'low', 'close', 'marketCap', 'open_close', 'low_high', 'year', 'month', 'day', 'target']]
 sub_df.head()
@@ -133,10 +129,8 @@ plt.subplots_adjust(left=0.1,
                     wspace=0.1,
                     hspace=0.4)
 plt.show()
-df.tail()
 
 df['MA7'] = df['close'].rolling(window=7).mean()
 df['MA30'] = df['close'].rolling(window=30).mean()
 df['Price_Change'] = df['close'].diff()
 
-df.info()
