@@ -1,31 +1,26 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import seaborn as sb
-from utils.utils import get_data
+from utils.utils import get_data, get_specific_data
 import warnings  # Adding warning ignore to avoid issues with distplot
 import numpy as np
 
 warnings.filterwarnings('ignore')
 
 # Read dataset and display basic information
-# df = get_data('Crypto_data_info.csv')
-df = pd.read_csv('Crypto_data.csv')
+df = get_data('Crypto_data_info.csv')
 
-df.head()
 print(df.shape)
 df.describe(include="all")
 
 # Filtering data for only Litecoin
-df = df.loc[df['crypto_name'] == 'Litecoin']
-df.head()
+df = get_specific_data(df, 'Litecoin')
 
 # Removing columns we wont use because they have only null values
 df = df.drop(columns=["volume"])
-df.head()
 
 # Conver date object type to date type
 df['date'] = pd.to_datetime(df['date'])
-df.info()
 
 # Plot historical close price
 plt.figure(figsize=(10, 5))
@@ -89,7 +84,6 @@ df['open_close'] = df['open'] - df['close']
 df['low_high'] = df['low'] - df['high']
 df['target'] = np.where(df['close'].shift(-1) > df['close'], 1, 0)
 
-df.tail()
 # Keeping the columns for heatmap exploration
 sub_df = df[['open', 'high', 'low', 'close', 'marketCap', 'open_close', 'low_high', 'year', 'month', 'day', 'target']]
 sub_df.head()
@@ -105,7 +99,7 @@ visualize_cols = ['open', 'high', 'low', 'marketCap']
 plt.figure(num="Scatter Plot")
 for index, val in enumerate(visualize_cols):
     plt.subplot(3, 2, index + 1)
-    plt.scatter(df.loc[df['crypto_name'] == 'Litecoin'][val], df.loc[df['crypto_name'] == 'Litecoin']['close'])
+    plt.scatter(df[val], df['close'])
 
     # bestfit line logic m, c = np.polyfit(df.loc[df['crypto_name'] == 'Bitcoin'][val], df.loc[df['crypto_name'] ==
     # 'Bitcoin']['marketCap'],deg= 1) plt.plot(df.loc[df['crypto_name'] == 'Bitcoin'][val], m*df.loc[df[
@@ -125,7 +119,7 @@ plt.subplots_adjust(left=0.1,
 plt.figure(num="Box plot")
 for index, val in enumerate(visualize_cols):
     plt.subplot(3, 2, index + 1)
-    plt.boxplot(pd.array(df.loc[df['crypto_name'] == 'Litecoin'][val]), vert=False)
+    plt.boxplot(pd.array(df[val]), vert=False)
     plt.title(f'Box plot of {val} ')
 
 plt.subplots_adjust(left=0.1,
@@ -135,10 +129,8 @@ plt.subplots_adjust(left=0.1,
                     wspace=0.1,
                     hspace=0.4)
 plt.show()
-df.tail()
 
 df['MA7'] = df['close'].rolling(window=7).mean()
 df['MA30'] = df['close'].rolling(window=30).mean()
 df['Price_Change'] = df['close'].diff()
 
-df.info()
