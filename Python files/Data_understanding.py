@@ -10,6 +10,8 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score, classification_report
 from graphs import Graphs
 
+from xgboost import XGBClassifier
+
 warnings.filterwarnings('ignore')
 
 # Read dataset and display basic information
@@ -101,3 +103,17 @@ test_acc = accuracy_score(y_test_class, test_pred)
 
 print(f'Accuracy of Training: {train_acc}')
 print(f'Accuracy of Testing: {test_acc}')
+
+#use XGBClassifier to tain a model and predict classes
+xgbclassifier = XGBClassifier()
+xgbclassifier.fit(X_train, y_train_class)
+
+train_pred_xgb = xgbclassifier.predict(X_train)
+test_pred_xgb = xgbclassifier.predict(X_test)
+
+train_acc_xgb = accuracy_score(y_train_class, train_pred)
+test_acc_xgb = accuracy_score(y_test_class, test_pred)
+
+print("Evaluation results for XGBClassifier:")
+print(f"training set accuracy: {train_acc_xgb}")
+print(f"test set accuracy: {test_acc_xgb}")
