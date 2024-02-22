@@ -143,3 +143,18 @@ class Graphs:
         rows = math.ceil(len(features)/2)
         col = 2
         return (rows, col)
+    
+    def dynamincSubPlotLogic(length : int):     
+        if(length == 1):
+            return (1, 1)
+        elif(length == 2):
+            return (2, 1)
+        else:
+            default_diviser , min_row, min_col = 2, 0, 0
+            while(default_diviser <= int(math.ceil(length/2))):
+                q = int(math.ceil(length / default_diviser))
+                if((min_row + min_col > default_diviser + q) or (min_row == 0 and min_col == 0)):
+                    min_row = default_diviser
+                    min_col = q
+                default_diviser = default_diviser + 1
+            return ( min_row if min_row > min_col else min_col, min_row if min_row < min_col else min_col)    
