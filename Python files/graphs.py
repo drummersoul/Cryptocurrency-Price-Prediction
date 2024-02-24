@@ -11,7 +11,7 @@ class Graphs:
 
     def graphCorrelation(self, df : pd.DataFrame, title = "Correlation HeatMap"):
         plt.figure("Correalation HeatMap")
-        corr = df.corr(numeric_only=True).round(2)
+        corr = df.corr(numeric_only=True, method= "spearman").round(2)
         sb.heatmap(corr, annot=True)
         plt.title(title, fontsize = 15)
         plt.show()
