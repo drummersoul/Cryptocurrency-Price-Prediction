@@ -14,7 +14,7 @@ class Models:
 
         self.__shape_validation(x_train.shape, x_test.shape, y_train.shape, y_test.shape)
 
-        print("Logistic Regression : ")
+        print("Logistic Regression : ", end="\n\n")
         logistic_reg = LogisticRegression()
         logistic_reg.fit(x_train, y_train)
 
@@ -32,7 +32,7 @@ class Models:
 
         self.__shape_validation(x_train.shape, x_test.shape, y_train.shape, y_test.shape)
 
-        print("xgbclassifier : ")
+        print("xgbclassifier : ", end="\n\n")
         xgbclassifier = XGBClassifier()
         xgbclassifier.fit(x_train, y_train)
 
@@ -51,7 +51,7 @@ class Models:
 
         self.__shape_validation(x_train.shape, x_test.shape, y_train.shape, y_test.shape)
 
-        print("Linear Regression OLS Model : ")
+        print("Linear Regression OLS Model : ", end="\n\n")
         ols = LinearRegression()
         ols.fit(x_train,y_train)
         print('RMSE in Train: '+str(round(math.sqrt(mean_squared_error(y_train,ols.predict(x_train))),2)))
@@ -66,6 +66,3 @@ class Models:
             raise Exception("Train Dataset Size Mismatch")
         if(x_test_shape[0] != y_test_shape[0]):
             raise Exception("Test Dataset Size Mismatch")
-    
-    def print(self):
-        print("12345")

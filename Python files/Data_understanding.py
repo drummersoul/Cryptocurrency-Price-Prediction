@@ -15,108 +15,114 @@ from xgboost import XGBClassifier
 
 warnings.filterwarnings('ignore')
 
-# Read dataset and display basic information
-df = get_data('Crypto_data_info.csv')
+class DataUnderstanding:
 
-#instantiating Graph & Model classes
-graph = Graphs()
-model = Models()
+    def __init__(self) -> None:
+        pass
 
-# Filtering data for only Litecoin
-df = get_specific_data(df, 'Litecoin')
-print(df.shape)
+    def data_understanding(self, file_name : str):
+        # Read dataset and display basic information
+        df = get_data(file_name)
 
-# Removing columns we wont use because they have only null values
-df = df.drop(columns=["volume"])
+        #instantiating Graph & Model classes
+        graph = Graphs()
+        model = Models()
 
-# Conver date object type to date type
-df['date'] = pd.to_datetime(df['date'])
+        # Filtering data for only Litecoin
+        df = get_specific_data(df, 'Litecoin')
+        print(df.shape)
 
-# Plot historical close price
-graph.basicPlot(y = df['close'], title='Crypto Close Price', y_label= 'Price in Dollars')
+        # Removing columns we wont use because they have only null values
+        df = df.drop(columns=["volume"])
 
-# Define features for future use
-features = ['open', 'high', 'low', 'close']
-graph.distPlotWithSubPlot(df, features = features, rows = 2, cols = 2)
+        # Conver date object type to date type
+        df['date'] = pd.to_datetime(df['date'])
 
-# Extract the year from the 'date' column using the dt accessor in pandas
-df['year'] = df['date'].dt.year
-# Extract the month from the 'date' column using the dt accessor in pandas
-df['month'] = df['date'].dt.month
-# Extract the day from the 'date' column using the dt accessor in pandas
-df['day'] = df['date'].dt.day
+        # Plot historical close price
+        graph.basicPlot(y = df['close'], title='Crypto Close Price', y_label= 'Price in Dollars')
 
-# Print the first few rows of the DataFrame to see the changes
-print(df.head())
+        # Define features for future use
+        features = ['open', 'high', 'low', 'close']
+        graph.distPlotWithSubPlot(df, features = features, rows = 2, cols = 2)
 
-# Group the DataFrame 'df' by the 'year' column and calculate the mean of each numeric column for each group
-# numeric_only is to calculate mean only for numbers
-data_grouped = df.groupby(by=['year']).mean(numeric_only=True)
-print(data_grouped)
+        # Extract the year from the 'date' column using the dt accessor in pandas
+        df['year'] = df['date'].dt.year
+        # Extract the month from the 'date' column using the dt accessor in pandas
+        df['month'] = df['date'].dt.month
+        # Extract the day from the 'date' column using the dt accessor in pandas
+        df['day'] = df['date'].dt.day
 
-bar_plot_features = ['open', 'high', 'low', 'close']
-# Plot a bar chart for the current column using the grouped data
-graph.barplotWithSubplot(data_grouped, bar_plot_features, 2, 2)
+        # Print the first few rows of the DataFrame to see the changes
+        print(df.head())
 
-df['open_close'] = df['open'] - df['close']
-df['low_high'] = df['low'] - df['high']
-df['target'] = np.where(df['close'].shift(-1) > df['close'], 1, 0)
+        # Group the DataFrame 'df' by the 'year' column and calculate the mean of each numeric column for each group
+        # numeric_only is to calculate mean only for numbers
+        data_grouped = df.groupby(by=['year']).mean(numeric_only=True)
+        print(data_grouped)
 
-# Keeping the columns for heatmap exploration
-sub_df = df[['open', 'high', 'low', 'close', 'marketCap', 'open_close', 'low_high', 'year', 'month', 'day', 'target']]
-sub_df.head()
+        bar_plot_features = ['open', 'high', 'low', 'close']
+        # Plot a bar chart for the current column using the grouped data
+        graph.barplotWithSubplot(data_grouped, bar_plot_features, 2, 2)
 
-# Correlation for Litecoin crypto
-graph.graphCorrelation(df.iloc[:, 1:], "Correlation HeatMap for Litecoin")
+        df['open_close'] = df['open'] - df['close']
+        df['low_high'] = df['low'] - df['high']
+        df['target'] = np.where(df['close'].shift(-1) > df['close'], 1, 0)
 
-visualize_cols = ['open', 'high', 'low', 'marketCap']
+        # Keeping the columns for heatmap exploration
+        sub_df = df[['open', 'high', 'low', 'close', 'marketCap', 'open_close', 'low_high', 'year', 'month', 'day', 'target']]
+        sub_df.head()
 
-# ploting graph to check correlation
-graph.scatterPlotWithSubPlot(df, 'close', visualize_cols, 2, 2)
+        # Correlation for Litecoin crypto
+        graph.graphCorrelation(df.iloc[:, 1:], "Correlation HeatMap for Litecoin")
 
-# boxplot to check outliers with whisker_length(whis) of 1.5(default value)
-graph.boxPlotWithSubplot(df, visualize_cols, 2, 2)
+        visualize_cols = ['open', 'high', 'low', 'marketCap']
 
-df['MA7'] = df['close'].rolling(window=7).mean()
-df['MA30'] = df['close'].rolling(window=30).mean()
-df['Price_Change'] = df['close'].diff()
+        # ploting graph to check correlation
+        graph.scatterPlotWithSubPlot(df, 'close', visualize_cols, 2, 2)
 
-X = df[['open', 'high', 'low', 'marketCap', 'year', 'month', 'day']]
-y = df['close']
+        # boxplot to check outliers with whisker_length(whis) of 1.5(default value)
+        graph.boxPlotWithSubplot(df, visualize_cols, 2, 2)
 
-X_test, X_train, y_test, y_train = train_test_split(X, y, test_size=0.1, random_state=2022)
+        df['MA7'] = df['close'].rolling(window=7).mean()
+        df['MA30'] = df['close'].rolling(window=30).mean()
+        df['Price_Change'] = df['close'].diff()
 
-print(f"X_train: {X_train.shape}")
-print(f"X_test: {X_test.shape}")
-print(f"y_train: {y_train.shape}")
-print(f"y_test: {y_test.shape}")
+        X = df[['open', 'high', 'low', 'marketCap', 'year', 'month', 'day']]
+        y = df['close']
 
-y_train_class = (y_train.shift(-1) > y_train).astype(int)
-y_test_class = (y_test.shift(-1) > y_test).astype(int)
+        X_test, X_train, y_test, y_train = train_test_split(X, y, test_size=0.1, random_state=2022)
 
-#LogisticRegression
-logistic_reg = LogisticRegression()
-logistic_reg.fit(X_train, y_train_class)
+        print(f"X_train: {X_train.shape}")
+        print(f"X_test: {X_test.shape}")
+        print(f"y_train: {y_train.shape}")
+        print(f"y_test: {y_test.shape}")
 
-train_pred = logistic_reg.predict(X_train)
-test_pred = logistic_reg.predict(X_test)
+        y_train_class = (y_train.shift(-1) > y_train).astype(int)
+        y_test_class = (y_test.shift(-1) > y_test).astype(int)
 
-train_acc = accuracy_score(y_train_class, train_pred)
-test_acc = accuracy_score(y_test_class, test_pred)
+        #LogisticRegression
+        logistic_reg = LogisticRegression()
+        logistic_reg.fit(X_train, y_train_class)
 
-print(f'Accuracy of Training: {train_acc}')
-print(f'Accuracy of Testing: {test_acc}')
+        train_pred = logistic_reg.predict(X_train)
+        test_pred = logistic_reg.predict(X_test)
 
-#use XGBClassifier to tain a model and predict classes
-xgbclassifier = XGBClassifier()
-xgbclassifier.fit(X_train, y_train_class)
+        train_acc = accuracy_score(y_train_class, train_pred)
+        test_acc = accuracy_score(y_test_class, test_pred)
 
-train_pred_xgb = xgbclassifier.predict(X_train)
-test_pred_xgb = xgbclassifier.predict(X_test)
+        print(f'Accuracy of Training: {train_acc}')
+        print(f'Accuracy of Testing: {test_acc}')
 
-train_acc_xgb = accuracy_score(y_train_class, train_pred)
-test_acc_xgb = accuracy_score(y_test_class, test_pred)
+        #use XGBClassifier to tain a model and predict classes
+        xgbclassifier = XGBClassifier()
+        xgbclassifier.fit(X_train, y_train_class)
 
-print("Evaluation results for XGBClassifier:")
-print(f"training set accuracy: {train_acc_xgb}")
-print(f"test set accuracy: {test_acc_xgb}")
+        train_pred_xgb = xgbclassifier.predict(X_train)
+        test_pred_xgb = xgbclassifier.predict(X_test)
+
+        train_acc_xgb = accuracy_score(y_train_class, train_pred)
+        test_acc_xgb = accuracy_score(y_test_class, test_pred)
+
+        print("Evaluation results for XGBClassifier:")
+        print(f"training set accuracy: {train_acc_xgb}")
+        print(f"test set accuracy: {test_acc_xgb}")
