@@ -4,110 +4,125 @@ import seaborn as sb
 from utils.utils import get_data, get_specific_data
 import warnings  # Adding warning ignore to avoid issues with distplot
 import numpy as np
+
+from sklearn.model_selection import train_test_split
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import accuracy_score, classification_report
 from graphs import Graphs
+from Ml_Models import Models
+
+from xgboost import XGBClassifier
 
 warnings.filterwarnings('ignore')
 
-# Read dataset and display basic information
-df = get_data('Crypto_data_info.csv')
+class DataUnderstanding:
 
-#instantiating Graph
-graph = Graphs()
+    def __init__(self) -> None:
+        pass
 
-# Filtering data for only Litecoin
-df = get_specific_data(df, 'Litecoin')
-print(df.shape)
+    def data_understanding(self, file_name : str):
+        # Read dataset and display basic information
+        df = get_data(file_name)
 
-# Removing columns we wont use because they have only null values
-df = df.drop(columns=["volume"])
+        #instantiating Graph & Model classes
+        graph = Graphs()
+        model = Models()
 
-# Conver date object type to date type
-df['date'] = pd.to_datetime(df['date'])
+        # Filtering data for only Litecoin
+        df = get_specific_data(df, 'Litecoin')
+        print(df.shape)
 
-# Plot historical close price
-graph.basicPlot(y = df['close'], title='Crypto Close Price', y_label= 'Price in Dollars')
+        # Removing columns we wont use because they have only null values
+        df = df.drop(columns=["volume"])
 
-# Define features for future use
-features = ['open', 'high', 'low', 'close']
-graph.distPlotWithSubPlot(df, features = features, rows = 2, cols = 2)
+        # Conver date object type to date type
+        df['date'] = pd.to_datetime(df['date'])
 
-# Extract the year from the 'date' column using the dt accessor in pandas
-df['year'] = df['date'].dt.year
-# Extract the month from the 'date' column using the dt accessor in pandas
-df['month'] = df['date'].dt.month
-# Extract the day from the 'date' column using the dt accessor in pandas
-df['day'] = df['date'].dt.day
+        # Plot historical close price
+        graph.basicPlot(y = df['close'], title='Crypto Close Price', y_label= 'Price in Dollars')
 
-# Print the first few rows of the DataFrame to see the changes
-print(df.head())
+        # Define features for future use
+        features = ['open', 'high', 'low', 'close']
+        graph.distPlotWithSubPlot(df, features = features, rows = 2, cols = 2)
 
-# Group the DataFrame 'df' by the 'year' column and calculate the mean of each numeric column for each group
-# numeric_only is to calculate mean only for numbers
-data_grouped = df.groupby(by=['year']).mean(numeric_only=True)
-print(data_grouped)
+        # Extract the year from the 'date' column using the dt accessor in pandas
+        df['year'] = df['date'].dt.year
+        # Extract the month from the 'date' column using the dt accessor in pandas
+        df['month'] = df['date'].dt.month
+        # Extract the day from the 'date' column using the dt accessor in pandas
+        df['day'] = df['date'].dt.day
 
-bar_plot_features = ['open', 'high', 'low', 'close']
-# Plot a bar chart for the current column using the grouped data
-graph.barplotWithSubplot(data_grouped, bar_plot_features, 2, 2)
+        # Print the first few rows of the DataFrame to see the changes
+        print(df.head())
 
+        # Group the DataFrame 'df' by the 'year' column and calculate the mean of each numeric column for each group
+        # numeric_only is to calculate mean only for numbers
+        data_grouped = df.groupby(by=['year']).mean(numeric_only=True)
+        print(data_grouped)
 
-plt.title('This is a boxplot of Crypto Open Prices includes outliers')  # This is the Title for Boxplot
-plt.xlabel('open price')  # label for open boxplot
-sb.boxplot(data=df['open'], showfliers=True,
-           orient='h')
-plt.show()
+        bar_plot_features = ['open', 'high', 'low', 'close']
+        # Plot a bar chart for the current column using the grouped data
+        graph.barplotWithSubplot(data_grouped, bar_plot_features, 2, 2)
 
-df['open_close'] = df['open'] - df['close']
-df['low_high'] = df['low'] - df['high']
-df['target'] = np.where(df['close'].shift(-1) > df['close'], 1, 0)
+        df['open_close'] = df['open'] - df['close']
+        df['low_high'] = df['low'] - df['high']
+        df['target'] = np.where(df['close'].shift(-1) > df['close'], 1, 0)
 
-# Keeping the columns for heatmap exploration
-sub_df = df[['open', 'high', 'low', 'close', 'marketCap', 'open_close', 'low_high', 'year', 'month', 'day', 'target']]
-sub_df.head()
+        # Keeping the columns for heatmap exploration
+        sub_df = df[['open', 'high', 'low', 'close', 'marketCap', 'open_close', 'low_high', 'year', 'month', 'day', 'target']]
+        sub_df.head()
 
-# Correlation for Litecoin crypto
-plt.figure(num="Correlation HeatMap For Litecoin")
-corr = df.iloc[:, 1:].corr(method='spearman', numeric_only=True).round(2)
-sb.heatmap(corr, annot=True)
-plt.title("Correlation HeatMap for Litecoin")
+        # Correlation for Litecoin crypto
+        graph.graphCorrelation(df.iloc[:, 1:], "Correlation HeatMap for Litecoin")
 
-visualize_cols = ['open', 'high', 'low', 'marketCap']
-# ploting graph to check correlation
-plt.figure(num="Scatter Plot")
-for index, val in enumerate(visualize_cols):
-    plt.subplot(3, 2, index + 1)
-    plt.scatter(df[val], df['close'])
+        visualize_cols = ['open', 'high', 'low', 'marketCap']
 
-    # bestfit line logic m, c = np.polyfit(df.loc[df['crypto_name'] == 'Bitcoin'][val], df.loc[df['crypto_name'] ==
-    # 'Bitcoin']['marketCap'],deg= 1) plt.plot(df.loc[df['crypto_name'] == 'Bitcoin'][val], m*df.loc[df[
-    # 'crypto_name'] == 'Bitcoin'][val]+c, color = 'red')
+        # ploting graph to check correlation
+        graph.scatterPlotWithSubPlot(df, 'close', visualize_cols, 2, 2)
 
-    plt.xlabel(val)
-    plt.ylabel('close')
-    plt.title(f'Scatter plot between {val} and close ')
-plt.subplots_adjust(left=0.1,
-                    bottom=0.08,
-                    right=0.9,
-                    top=0.9,
-                    wspace=0.1,
-                    hspace=0.4)
+        # boxplot to check outliers with whisker_length(whis) of 1.5(default value)
+        graph.boxPlotWithSubplot(df, visualize_cols, 2, 2)
 
-# boxplot to check outliers with whisker_length(whis) of 1.5(default value)
-plt.figure(num="Box plot")
-for index, val in enumerate(visualize_cols):
-    plt.subplot(3, 2, index + 1)
-    plt.boxplot(pd.array(df[val]), vert=False)
-    plt.title(f'Box plot of {val} ')
+        df['MA7'] = df['close'].rolling(window=7).mean()
+        df['MA30'] = df['close'].rolling(window=30).mean()
+        df['Price_Change'] = df['close'].diff()
 
-plt.subplots_adjust(left=0.1,
-                    bottom=0.08,
-                    right=0.9,
-                    top=0.9,
-                    wspace=0.1,
-                    hspace=0.4)
-plt.show()
+        X = df[['open', 'high', 'low', 'marketCap', 'year', 'month', 'day']]
+        y = df['close']
 
-df['MA7'] = df['close'].rolling(window=7).mean()
-df['MA30'] = df['close'].rolling(window=30).mean()
-df['Price_Change'] = df['close'].diff()
+        X_test, X_train, y_test, y_train = train_test_split(X, y, test_size=0.1, random_state=2022)
 
+        print(f"X_train: {X_train.shape}")
+        print(f"X_test: {X_test.shape}")
+        print(f"y_train: {y_train.shape}")
+        print(f"y_test: {y_test.shape}")
+
+        y_train_class = (y_train.shift(-1) > y_train).astype(int)
+        y_test_class = (y_test.shift(-1) > y_test).astype(int)
+
+        #LogisticRegression
+        logistic_reg = LogisticRegression()
+        logistic_reg.fit(X_train, y_train_class)
+
+        train_pred = logistic_reg.predict(X_train)
+        test_pred = logistic_reg.predict(X_test)
+
+        train_acc = accuracy_score(y_train_class, train_pred)
+        test_acc = accuracy_score(y_test_class, test_pred)
+
+        print(f'Accuracy of Training: {train_acc}')
+        print(f'Accuracy of Testing: {test_acc}')
+
+        #use XGBClassifier to tain a model and predict classes
+        xgbclassifier = XGBClassifier()
+        xgbclassifier.fit(X_train, y_train_class)
+
+        train_pred_xgb = xgbclassifier.predict(X_train)
+        test_pred_xgb = xgbclassifier.predict(X_test)
+
+        train_acc_xgb = accuracy_score(y_train_class, train_pred)
+        test_acc_xgb = accuracy_score(y_test_class, test_pred)
+
+        print("Evaluation results for XGBClassifier:")
+        print(f"training set accuracy: {train_acc_xgb}")
+        print(f"test set accuracy: {test_acc_xgb}")
