@@ -10,7 +10,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score, classification_report
 from graphs import Graphs
 from Ml_Models import Models
-
+from sklearn.preprocessing import StandardScaler
 from xgboost import XGBClassifier
 
 warnings.filterwarnings('ignore')
@@ -89,6 +89,10 @@ class DataUnderstanding:
 
         X = df[['open', 'high', 'low', 'marketCap', 'year', 'month', 'day']]
         y = df['close']
+
+
+        scaler = StandardScaler()
+        X = scaler.fit_transform(X)
 
         X_test, X_train, y_test, y_train = train_test_split(X, y, test_size=0.1, random_state=2022)
 
