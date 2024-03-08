@@ -9,6 +9,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score, classification_report
 from graphs import Graphs
+from Ml_Models import Models
 
 from xgboost import XGBClassifier
 
@@ -17,8 +18,9 @@ warnings.filterwarnings('ignore')
 # Read dataset and display basic information
 df = get_data('Crypto_data_info.csv')
 
-#instantiating Graph class
+#instantiating Graph & Model classes
 graph = Graphs()
+model = Models()
 
 # Filtering data for only Litecoin
 df = get_specific_data(df, 'Litecoin')
@@ -92,6 +94,7 @@ print(f"y_test: {y_test.shape}")
 y_train_class = (y_train.shift(-1) > y_train).astype(int)
 y_test_class = (y_test.shift(-1) > y_test).astype(int)
 
+#LogisticRegression
 logistic_reg = LogisticRegression()
 logistic_reg.fit(X_train, y_train_class)
 
