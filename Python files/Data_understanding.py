@@ -114,7 +114,7 @@ class DataUnderstanding:
         print(f'Accuracy of Testing: {test_acc}')
 
         #use XGBClassifier to tain a model and predict classes
-        xgbclassifier = XGBClassifier()
+        xgbclassifier = XGBClassifier(reg_lambda=1.0,reg_alpha=0.5)
         xgbclassifier.fit(X_train, y_train_class)
 
         train_pred_xgb = xgbclassifier.predict(X_train)
