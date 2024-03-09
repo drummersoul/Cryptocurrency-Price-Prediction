@@ -10,7 +10,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score, classification_report
 from graphs import Graphs
 from Ml_Models import Models
-
+from sklearn.preprocessing import StandardScaler
 from xgboost import XGBClassifier
 
 warnings.filterwarnings('ignore')
@@ -90,6 +90,10 @@ class DataUnderstanding:
         X = df[['open', 'high', 'low', 'marketCap', 'year', 'month', 'day']]
         y = df['close']
 
+
+        scaler = StandardScaler()
+        X = scaler.fit_transform(X)
+
         X_test, X_train, y_test, y_train = train_test_split(X, y, test_size=0.1, random_state=2022)
 
         print(f"X_train: {X_train.shape}")
@@ -114,11 +118,8 @@ class DataUnderstanding:
         print(f'Accuracy of Testing: {test_acc}')
 
         #use XGBClassifier to tain a model and predict classes
-<<<<<<< Updated upstream
-        xgbclassifier = XGBClassifier()
-=======
+
         xgbclassifier = XGBClassifier(reg_lambda=1.0,reg_alpha=0.5, learning_rate = 0.01,max_depth=3)
->>>>>>> Stashed changes
         xgbclassifier.fit(X_train, y_train_class)
 
         train_pred_xgb = xgbclassifier.predict(X_train)
