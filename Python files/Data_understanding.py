@@ -10,7 +10,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score, classification_report
 from graphs import Graphs
 from Ml_Models import Models
-
+from sklearn.preprocessing import StandardScaler
 from xgboost import XGBClassifier
 
 warnings.filterwarnings('ignore')
@@ -90,7 +90,11 @@ class DataUnderstanding:
         X = df[['open', 'high', 'low', 'marketCap', 'year', 'month', 'day']]
         y = df['close']
 
-        X_test, X_train, y_test, y_train = train_test_split(X, y, test_size=0.1, random_state=2022)
+
+        scaler = StandardScaler()
+        X = scaler.fit_transform(X)
+
+        X_train, X_test, y_train, y_test  = train_test_split(X, y, test_size=0.1, random_state=2022)
 
         print(f"X_train: {X_train.shape}")
         print(f"X_test: {X_test.shape}")
@@ -114,14 +118,15 @@ class DataUnderstanding:
         print(f'Accuracy of Testing: {test_acc}')
 
         #use XGBClassifier to tain a model and predict classes
-        xgbclassifier = XGBClassifier()
+
+        xgbclassifier = XGBClassifier(reg_lambda=1.0,reg_alpha=0.5, learning_rate = 0.01,max_depth=3)
         xgbclassifier.fit(X_train, y_train_class)
 
         train_pred_xgb = xgbclassifier.predict(X_train)
         test_pred_xgb = xgbclassifier.predict(X_test)
 
-        train_acc_xgb = accuracy_score(y_train_class, train_pred)
-        test_acc_xgb = accuracy_score(y_test_class, test_pred)
+        train_acc_xgb = accuracy_score(y_train_class, train_pred_xgb)
+        test_acc_xgb = accuracy_score(y_test_class, test_pred_xgb)
 
         print("Evaluation results for XGBClassifier:")
         print(f"training set accuracy: {train_acc_xgb}")
