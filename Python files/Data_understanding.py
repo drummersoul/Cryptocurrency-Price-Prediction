@@ -105,28 +105,20 @@ class DataUnderstanding:
         y_test_class = (y_test.shift(-1) > y_test).astype(int)
 
         #LogisticRegression
-        logistic_reg = LogisticRegression()
-        logistic_reg.fit(X_train, y_train_class)
+        logistic_reg = model.logistic_regression(X_train, X_test, y_train_class, y_test_class)
 
-        train_pred = logistic_reg.predict(X_train)
-        test_pred = logistic_reg.predict(X_test)
-
-        train_acc = accuracy_score(y_train_class, train_pred)
-        test_acc = accuracy_score(y_test_class, test_pred)
-
+        train_acc, test_acc = logistic_reg
         print(f'Accuracy of Training: {train_acc}')
         print(f'Accuracy of Testing: {test_acc}')
 
         #use XGBClassifier to tain a model and predict classes
 
-        xgbclassifier = XGBClassifier(reg_lambda=1.0,reg_alpha=0.5, learning_rate = 0.01,max_depth=3)
-        xgbclassifier.fit(X_train, y_train_class)
-
-        train_pred_xgb = xgbclassifier.predict(X_train)
-        test_pred_xgb = xgbclassifier.predict(X_test)
-
-        train_acc_xgb = accuracy_score(y_train_class, train_pred_xgb)
-        test_acc_xgb = accuracy_score(y_test_class, test_pred_xgb)
+        reg_lambda = 1.0
+        reg_alpha = 0.5
+        learning_rate = 0.01
+        max_depth=3
+        xgbclassifier = model.xgbclassifier(reg_lambda, reg_alpha, learning_rate, max_depth, X_train, X_test, y_train_class, y_test_class)
+        train_acc_xgb, test_acc_xgb = xgbclassifier
 
         print("Evaluation results for XGBClassifier:")
         print(f"training set accuracy: {train_acc_xgb}")
