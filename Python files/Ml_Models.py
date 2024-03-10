@@ -23,17 +23,20 @@ class Models:
 
         train_acc = accuracy_score(y_train, train_pred)
         test_acc = accuracy_score(y_test, test_pred)
-
-        print(f'Accuracy of Training: {train_acc}')
-        print(f'Accuracy of Testing: {test_acc}')
     
+        return train_acc, test_acc
 
-    def xgbclassifier(self, x_train : pd.DataFrame, x_test : pd.DataFrame, y_train : pd.Series, y_test : pd.Series):
+    def xgbclassifier(self, reg_lambda: float, reg_alpha: float, learning_rate: float, max_depth: int, x_train : pd.DataFrame, x_test : pd.DataFrame, y_train : pd.Series, y_test : pd.Series):
 
         self.__shape_validation(x_train.shape, x_test.shape, y_train.shape, y_test.shape)
 
         print("xgbclassifier : ", end="\n\n")
-        xgbclassifier = XGBClassifier()
+        xgbclassifier = XGBClassifier(
+                            reg_lambda = reg_lambda,
+                            reg_alpha = reg_alpha,
+                            learning_rate = learning_rate,
+                            max_depth = max_depth
+                        )
         xgbclassifier.fit(x_train, y_train)
 
         train_pred_xgb = xgbclassifier.predict(x_train)
@@ -42,9 +45,7 @@ class Models:
         train_acc_xgb = accuracy_score(y_train, train_pred_xgb)
         test_acc_xgb = accuracy_score(y_test, test_pred_xgb)
 
-        print("Evaluation results for XGBClassifier:")
-        print(f"training set accuracy: {train_acc_xgb}")
-        print(f"test set accuracy: {test_acc_xgb}")
+        return train_acc_xgb, test_acc_xgb
 
     
     def linear_regression_ols(self, x_train : pd.DataFrame, x_test : pd.DataFrame, y_train : pd.Series, y_test : pd.Series):

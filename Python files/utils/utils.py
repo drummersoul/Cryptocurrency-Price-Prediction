@@ -6,7 +6,8 @@ def get_csv_file(file_name):
     current_directory = os.getcwd()
 
     # Specify the relative path to the CSV file from the current directory
-    csv_file_location = os.path.join(current_directory, "..","Excel DB", file_name)
+    print(current_directory)
+    csv_file_location = os.path.join(current_directory,"Excel DB", file_name)
 
     return csv_file_location
 
@@ -23,4 +24,5 @@ def get_data(file_name):
         print(f"File not found at location: {path}")
 
 def get_specific_data(data_frame: pd.DataFrame, crypto_name:str):
+    """return data for specific crypto"""
     return data_frame.loc[data_frame['crypto_name'] == crypto_name]
