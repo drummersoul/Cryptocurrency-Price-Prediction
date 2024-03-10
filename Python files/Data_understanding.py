@@ -51,6 +51,13 @@ class DataUnderstanding:
         df['month'] = df['date'].dt.month
         # Extract the day from the 'date' column using the dt accessor in pandas
         df['day'] = df['date'].dt.day
+        #new features derived using existing features
+        df['open_close'] = df['open'] - df['close']
+        df['low_high'] = df['low'] - df['high']
+        df['MA7'] = df['close'].rolling(window=7).mean()
+        df['MA30'] = df['close'].rolling(window=30).mean()
+        df['Price_Change'] = df['close'].diff()
+        df['target'] = np.where(df['close'].shift(-1) > df['close'], 1, 0)
 
         # Print the first few rows of the DataFrame to see the changes
         print(df.head())
@@ -64,32 +71,24 @@ class DataUnderstanding:
         # Plot a bar chart for the current column using the grouped data
         graph.barplotWithSubplot(data_grouped, bar_plot_features, 2, 2)
 
-        df['open_close'] = df['open'] - df['close']
-        df['low_high'] = df['low'] - df['high']
-        df['target'] = np.where(df['close'].shift(-1) > df['close'], 1, 0)
-
         # Keeping the columns for heatmap exploration
         sub_df = df[['open', 'high', 'low', 'close', 'marketCap', 'open_close', 'low_high', 'year', 'month', 'day', 'target']]
         sub_df.head()
 
         # Correlation for Litecoin crypto
-        graph.graphCorrelation(df.iloc[:, 1:], "Correlation HeatMap for Litecoin")
+        graph.graphCorrelation(sub_df.iloc[:, 1:], "Correlation HeatMap for Litecoin")
 
         visualize_cols = ['open', 'high', 'low', 'marketCap']
 
         # ploting graph to check correlation
-        graph.scatterPlotWithSubPlot(df, 'close', visualize_cols, 2, 2)
+        graph.scatterPlotWithSubPlot(sub_df, 'close', visualize_cols, 2, 2)
 
         # boxplot to check outliers with whisker_length(whis) of 1.5(default value)
-        graph.boxPlotWithSubplot(df, visualize_cols, 2, 2)
-
-        df['MA7'] = df['close'].rolling(window=7).mean()
-        df['MA30'] = df['close'].rolling(window=30).mean()
-        df['Price_Change'] = df['close'].diff()
-
+        graph.boxPlotWithSubplot(sub_df, visualize_cols, 2, 2)
+        
+        #feature and target variables for classification
         X = df[['open', 'high', 'low', 'marketCap', 'year', 'month', 'day']]
         y = df['close']
-
 
         scaler = StandardScaler()
         X = scaler.fit_transform(X)
