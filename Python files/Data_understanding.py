@@ -135,3 +135,8 @@ class DataUnderstanding:
 
         future = prophet_model.make_future_dataframe(periods=365)
         forecast = prophet_model.predict(future)
+        future = prophet_model.make_future_dataframe(periods=3, freq='M')
+        fig1 = prophet_model.plot(forecast)
+        plt.show()
+        fig2=prophet_model.plot_components(forecast)
+        plt.show()
