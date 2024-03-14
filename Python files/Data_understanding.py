@@ -12,6 +12,8 @@ from graphs import Graphs
 from Ml_Models import Models
 from sklearn.preprocessing import StandardScaler
 from xgboost import XGBClassifier
+from prophet import prophet
+from prophet.plot import add_changepoints_to_plot
 
 warnings.filterwarnings('ignore')
 
@@ -122,3 +124,14 @@ class DataUnderstanding:
         print("Evaluation results for XGBClassifier:")
         print(f"training set accuracy: {train_acc_xgb}")
         print(f"test set accuracy: {test_acc_xgb}")
+
+        prophet_data = df[['date','close']].copy()
+        prophet_data.column = ['ds', 'y']
+
+        #Rename columns to 'ds' and 'y'
+
+        prophet_model = prophet()
+        prophet_model.fit(prophet_data)
+
+        future = prophet_model.make_future_dataframe(periods=365)
+        forecast = prophet_model.predict(future)
