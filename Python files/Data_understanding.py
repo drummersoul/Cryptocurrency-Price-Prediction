@@ -12,8 +12,9 @@ from graphs import Graphs
 from Ml_Models import Models
 from sklearn.preprocessing import StandardScaler
 from xgboost import XGBClassifier
-from prophet import prophet
+from prophet import Prophet
 from prophet.plot import add_changepoints_to_plot
+from sklearn.metrics import mean_absolute_error
 
 warnings.filterwarnings('ignore')
 
@@ -126,11 +127,11 @@ class DataUnderstanding:
         print(f"test set accuracy: {test_acc_xgb}")
 
         prophet_data = df[['date','close']].copy()
-        prophet_data.column = ['ds', 'y']
+        prophet_data.columns = ['ds', 'y']
 
         #Rename columns to 'ds' and 'y'
 
-        prophet_model = prophet()
+        prophet_model = Prophet()
         prophet_model.fit(prophet_data)
 
         future = prophet_model.make_future_dataframe(periods=365)
@@ -140,3 +141,28 @@ class DataUnderstanding:
         plt.show()
         fig2=prophet_model.plot_components(forecast)
         plt.show()
+        
+        #Time series forecasting after splitting the data
+        split_date = '2021-04-01'
+        train_df = df[df['date'] <= split_date].copy()
+        test_df = df[df['date'] > split_date].copy()
+        train_df.rename(columns={'date': 'ds', 'close': 'y'}, inplace=True)
+        test_df.rename(columns={'date': 'ds', 'close': 'y'}, inplace=True)
+        
+        model=Prophet()
+        model.fit(train_df)
+        forecast_on_test=model.predict(test_df[['ds']])
+        
+        #Plot of the forecast with actual data
+        plt.figure(figsize=(15, 5))
+        plt.scatter(test_df['ds'], test_df['y'], color='r', label='Actual')
+        model.plot(forecast_on_test, ax=plt.gca())
+        plt.xlabel('Date')
+        plt.ylabel('Close Price')
+        plt.title('Forecast for Litecoin Close Price')
+        plt.legend()
+        plt.show()
+        
+        #Calculating MAE(Mean Absolute Error)
+        mae_accu=mean_absolute_error(y_true=test_df['y'], y_pred=forecast_on_test['yhat'])
+        print(f'Mean Absolute Error For Time series:{mae_accu}')
