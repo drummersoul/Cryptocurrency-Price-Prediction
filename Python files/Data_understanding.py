@@ -109,9 +109,12 @@ class DataUnderstanding:
         #LogisticRegression
         logistic_reg = model.logistic_regression(X_train, X_test, y_train_class, y_test_class)
 
-        train_acc, test_acc = logistic_reg
+        trained_logistic_model, train_acc, test_acc = logistic_reg
         print(f'Accuracy of Training: {train_acc}')
         print(f'Accuracy of Testing: {test_acc}')
+
+        #display confusion matrix, and classification report
+        Models.display_classificiation_metrics(trained_logistic_model, X_test, y_test_class)
 
         #use XGBClassifier to tain a model and predict classes
 
