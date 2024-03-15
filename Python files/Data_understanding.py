@@ -5,6 +5,7 @@ from utils.utils import get_data, get_specific_data
 import warnings  # Adding warning ignore to avoid issues with distplot
 import numpy as np
 
+from sklearn.metrics import roc_curve, roc_auc_score
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score, classification_report
@@ -109,7 +110,7 @@ class DataUnderstanding:
         #LogisticRegression
         logistic_reg = model.logistic_regression(X_train, X_test, y_train_class, y_test_class)
 
-        trained_logistic_model, train_acc, test_acc = logistic_reg
+        trained_logistic_model, train_acc, test_acc, y_pred_proba_logistic = logistic_reg
         print(f'Accuracy of Training: {train_acc}')
         print(f'Accuracy of Testing: {test_acc}')
 
@@ -123,7 +124,7 @@ class DataUnderstanding:
         learning_rate = 0.01
         max_depth=3
         xgbclassifier = model.xgbclassifier(reg_lambda, reg_alpha, learning_rate, max_depth, X_train, X_test, y_train_class, y_test_class)
-        train_acc_xgb, test_acc_xgb = xgbclassifier
+        train_acc_xgb, test_acc_xgb, y_pred_proba_xgb = xgbclassifier
 
         print("Evaluation results for XGBClassifier:")
         print(f"training set accuracy: {train_acc_xgb}")
@@ -169,3 +170,22 @@ class DataUnderstanding:
         #Calculating MAE(Mean Absolute Error)
         mae_accu=mean_absolute_error(y_true=test_df['y'], y_pred=forecast_on_test['yhat'])
         print(f'Mean Absolute Error For Time series:{mae_accu}')
+
+        # Calculating ROC curve and AUC for Logistic
+        fpr_logistic, tpr_logistic, thresholds_logistic = roc_curve(y_test_class, y_pred_proba_logistic)
+        roc_auc_logistic = roc_auc_score(y_test_class, y_pred_proba_logistic)
+
+        # Calculating ROC curve and AUC for XGBoost
+        fpr_xgb, tpr_xgb, thresholds_xgb = roc_curve(y_test_class, y_pred_proba_xgb)
+        roc_auc_xgb = roc_auc_score(y_test_class, y_pred_proba_xgb)
+
+        # Plotting ROC curve for both models
+        plt.figure(figsize=(8, 6))
+        plt.plot(fpr_logistic, tpr_logistic, label=f'Logistic Regression (AUC = {roc_auc_logistic:.2f})')
+        plt.plot(fpr_xgb, tpr_xgb, label=f'XGBoost (AUC = {roc_auc_xgb:.2f})')
+        plt.plot([0, 1], [0, 1], 'k--')
+        plt.xlabel('False Positive Rate')
+        plt.ylabel('True Positive Rate')
+        plt.title('ROC Curve')
+        plt.legend(loc='lower right')
+        plt.show()

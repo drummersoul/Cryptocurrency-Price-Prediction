@@ -26,8 +26,10 @@ class Models:
 
         train_acc = accuracy_score(y_train, train_pred)
         test_acc = accuracy_score(y_test, test_pred)
-    
-        return logistic_reg, train_acc, test_acc
+
+        logistic_reg_model = logistic_reg
+        y_pred_proba_logistic = logistic_reg_model.predict_proba(x_test)[:, 1]
+        return logistic_reg, train_acc, test_acc, y_pred_proba_logistic
 
     def xgbclassifier(self, reg_lambda: float, reg_alpha: float, learning_rate: float, max_depth: int, x_train : pd.DataFrame, x_test : pd.DataFrame, y_train : pd.Series, y_test : pd.Series):
 
@@ -48,7 +50,9 @@ class Models:
         train_acc_xgb = accuracy_score(y_train, train_pred_xgb)
         test_acc_xgb = accuracy_score(y_test, test_pred_xgb)
 
-        return train_acc_xgb, test_acc_xgb
+        xgbclassifier_model = xgbclassifier
+        y_pred_proba_xgb = xgbclassifier_model.predict_proba(x_test)[:, 1]
+        return train_acc_xgb, test_acc_xgb, y_pred_proba_xgb
 
     
     def linear_regression_ols(self, x_train : pd.DataFrame, x_test : pd.DataFrame, y_train : pd.Series, y_test : pd.Series):
