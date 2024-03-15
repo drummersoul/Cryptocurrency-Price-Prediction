@@ -115,7 +115,7 @@ class DataUnderstanding:
         print(f'Accuracy of Testing: {test_acc}')
 
         #display confusion matrix, and classification report
-        Models.display_classificiation_metrics(trained_logistic_model, X_test, y_test_class)
+        model.display_classificiation_metrics(trained_logistic_model, X_test, y_test_class, 'Logistic Regression')
 
         #use XGBClassifier to tain a model and predict classes
 

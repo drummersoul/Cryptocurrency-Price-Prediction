@@ -5,6 +5,7 @@ from sklearn.metrics import accuracy_score, mean_squared_error, r2_score
 from xgboost import XGBClassifier
 from sklearn.metrics import classification_report
 from sklearn.metrics import ConfusionMatrixDisplay
+from yellowbrick.classifier import ClassPredictionError
 import matplotlib.pyplot as plt
 
 class Models:
@@ -35,6 +36,7 @@ class Models:
 
         self.__shape_validation(x_train.shape, x_test.shape, y_train.shape, y_test.shape)
 
+        model_name = "XGB Classifier"
         print("xgbclassifier : ", end="\n\n")
         xgbclassifier = XGBClassifier(
                             reg_lambda = reg_lambda,
@@ -52,6 +54,10 @@ class Models:
 
         xgbclassifier_model = xgbclassifier
         y_pred_proba_xgb = xgbclassifier_model.predict_proba(x_test)[:, 1]
+
+        self.display_classificiation_metrics(xgbclassifier, x_test, y_test, model_name)
+
+        self.class_prediction_error(x_train, x_test, x_test, y_test, xgbclassifier, 'XGBClassifier')
         return train_acc_xgb, test_acc_xgb, y_pred_proba_xgb
 
     
@@ -75,12 +81,24 @@ class Models:
         if(x_test_shape[0] != y_test_shape[0]):
             raise Exception("Test Dataset Size Mismatch")
 
-    def display_classificiation_metrics(trained_classifier, X_test, y_test):
+    def display_classificiation_metrics(self, trained_classifier, X_test, y_test, model_name=""):
         y_test_predicted = trained_classifier.predict(X_test)
         #display confusion matrix
         ConfusionMatrixDisplay.from_predictions(y_test, y_test_predicted)
-        plt.title("confusion matrix for test data")
+        plt.title(f'confusion matrix for {model_name} test data')
         plt.show()
         #print precision, recall, f1_score with respect to class with label 1 and accuracy
         print("classification report for test data:\n")
         print(classification_report(y_test, y_test_predicted))
+
+    def class_prediction_error(self, x_train: pd.DataFrame, y_train: pd.DataFrame, x_test: pd.DataFrame, y_test: pd.DataFrame, model, model_name: str):
+        visualizer = ClassPredictionError(model,  classes=['low', 'high'])
+
+        # Fit the training data to the visualizer
+        visualizer.fit(x_train, y_train)
+
+        # Evaluate the model on the test data
+        visualizer.score(x_test, y_test)
+
+        # Draw visualization
+        visualizer.show()
