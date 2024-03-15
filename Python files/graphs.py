@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import seaborn as sb
 import numpy as np
 import math as math
+from prophet import Prophet
 
 class Graphs:
 
@@ -158,3 +159,25 @@ class Graphs:
                     min_col = q
                 default_diviser = default_diviser + 1
             return ( min_row if min_row > min_col else min_col, min_row if min_row < min_col else min_col)    
+        
+    def roc_cure(self, fpr_logistic : np.ndarray, tpr_logistic : np.ndarray, roc_auc_logistic : float, 
+                 fpr_xgb : np.ndarray, tpr_xgb : np.ndarray, roc_auc_xgb: float):
+        plt.figure(figsize=(8, 6))
+        plt.plot(fpr_logistic, tpr_logistic, label=f'Logistic Regression (AUC = {roc_auc_logistic:.2f})')
+        plt.plot(fpr_xgb, tpr_xgb, label=f'XGBoost (AUC = {roc_auc_xgb:.2f})')
+        plt.plot([0, 1], [0, 1], 'k--')
+        plt.xlabel('False Positive Rate')
+        plt.ylabel('True Positive Rate')
+        plt.title('ROC Curve')
+        plt.legend(loc='lower right')
+        plt.show()
+
+    def forecast_with_actual_data(self, model : Prophet, test_df : pd.DataFrame, forecast_on_test : pd.DataFrame):
+        plt.figure(figsize=(15, 5))
+        plt.scatter(test_df['ds'], test_df['y'], color='r', label='Actual')
+        model.plot(forecast_on_test, ax=plt.gca())
+        plt.xlabel('Date')
+        plt.ylabel('Close Price')
+        plt.title('Forecast for Litecoin Close Price')
+        plt.legend()
+        plt.show()

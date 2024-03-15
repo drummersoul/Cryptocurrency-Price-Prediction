@@ -115,7 +115,7 @@ class DataUnderstanding:
         print(f'Accuracy of Testing: {test_acc}')
 
         #display confusion matrix, and classification report
-        Models.display_classificiation_metrics(trained_logistic_model, X_test, y_test_class)
+        model.display_classificiation_metrics(trained_logistic_model, X_test, y_test_class)
 
         #use XGBClassifier to tain a model and predict classes
 
@@ -158,14 +158,7 @@ class DataUnderstanding:
         forecast_on_test=model.predict(test_df[['ds']])
         
         #Plot of the forecast with actual data
-        plt.figure(figsize=(15, 5))
-        plt.scatter(test_df['ds'], test_df['y'], color='r', label='Actual')
-        model.plot(forecast_on_test, ax=plt.gca())
-        plt.xlabel('Date')
-        plt.ylabel('Close Price')
-        plt.title('Forecast for Litecoin Close Price')
-        plt.legend()
-        plt.show()
+        graph.forecast_with_actual_data(model, test_df, forecast_on_test)
         
         #Calculating MAE(Mean Absolute Error)
         mae_accu=mean_absolute_error(y_true=test_df['y'], y_pred=forecast_on_test['yhat'])
@@ -180,12 +173,4 @@ class DataUnderstanding:
         roc_auc_xgb = roc_auc_score(y_test_class, y_pred_proba_xgb)
 
         # Plotting ROC curve for both models
-        plt.figure(figsize=(8, 6))
-        plt.plot(fpr_logistic, tpr_logistic, label=f'Logistic Regression (AUC = {roc_auc_logistic:.2f})')
-        plt.plot(fpr_xgb, tpr_xgb, label=f'XGBoost (AUC = {roc_auc_xgb:.2f})')
-        plt.plot([0, 1], [0, 1], 'k--')
-        plt.xlabel('False Positive Rate')
-        plt.ylabel('True Positive Rate')
-        plt.title('ROC Curve')
-        plt.legend(loc='lower right')
-        plt.show()
+        graph.roc_cure(fpr_logistic, tpr_logistic,roc_auc_logistic, fpr_xgb, tpr_xgb, roc_auc_xgb)
