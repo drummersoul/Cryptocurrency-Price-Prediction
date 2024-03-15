@@ -1,8 +1,11 @@
 import pandas as pd
 import math as math
 from sklearn.linear_model import LinearRegression, LogisticRegression #, SGDRegressor, Lasso, LassoCV, Ridge, RidgeCV, ElasticNet, ElasticNetCV
-from sklearn.metrics import accuracy_score, classification_report, mean_squared_error, r2_score
+from sklearn.metrics import accuracy_score, mean_squared_error, r2_score
 from xgboost import XGBClassifier
+from sklearn.metrics import classification_report
+from sklearn.metrics import ConfusionMatrixDisplay
+import matplotlib.pyplot as plt
 
 class Models:
 
@@ -24,7 +27,7 @@ class Models:
         train_acc = accuracy_score(y_train, train_pred)
         test_acc = accuracy_score(y_test, test_pred)
     
-        return train_acc, test_acc
+        return logistic_reg, train_acc, test_acc
 
     def xgbclassifier(self, reg_lambda: float, reg_alpha: float, learning_rate: float, max_depth: int, x_train : pd.DataFrame, x_test : pd.DataFrame, y_train : pd.Series, y_test : pd.Series):
 
@@ -67,3 +70,13 @@ class Models:
             raise Exception("Train Dataset Size Mismatch")
         if(x_test_shape[0] != y_test_shape[0]):
             raise Exception("Test Dataset Size Mismatch")
+
+    def display_classificiation_metrics(trained_classifier, X_test, y_test):
+        y_test_predicted = trained_classifier.predict(X_test)
+        #display confusion matrix
+        ConfusionMatrixDisplay.from_predictions(y_test, y_test_predicted)
+        plt.title("confusion matrix for test data")
+        plt.show()
+        #print precision, recall, f1_score with respect to class with label 1 and accuracy
+        print("classification report for test data:\n")
+        print(classification_report(y_test, y_test_predicted))
