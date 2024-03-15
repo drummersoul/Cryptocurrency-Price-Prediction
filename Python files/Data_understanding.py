@@ -97,7 +97,7 @@ class DataUnderstanding:
         scaler = StandardScaler()
         X = scaler.fit_transform(X)
 
-        X_train, X_test, y_train, y_test  = train_test_split(X, y, test_size=0.1, random_state=2022)
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1, random_state=2022)
 
         print(f"X_train: {X_train.shape}")
         print(f"X_test: {X_test.shape}")
@@ -115,14 +115,18 @@ class DataUnderstanding:
         print(f'Accuracy of Testing: {test_acc}')
 
         #display confusion matrix, and classification report
+<<<<<<< HEAD
         model.display_classificiation_metrics(trained_logistic_model, X_test, y_test_class, 'Logistic Regression')
+=======
+        model.display_classificiation_metrics(trained_logistic_model, X_test, y_test_class)
+>>>>>>> main
 
         #use XGBClassifier to tain a model and predict classes
 
         reg_lambda = 1.0
         reg_alpha = 0.5
         learning_rate = 0.01
-        max_depth=3
+        max_depth = 3
         xgbclassifier = model.xgbclassifier(reg_lambda, reg_alpha, learning_rate, max_depth, X_train, X_test, y_train_class, y_test_class)
         train_acc_xgb, test_acc_xgb, y_pred_proba_xgb = xgbclassifier
 
@@ -143,7 +147,7 @@ class DataUnderstanding:
         future = prophet_model.make_future_dataframe(periods=3, freq='M')
         fig1 = prophet_model.plot(forecast)
         plt.show()
-        fig2=prophet_model.plot_components(forecast)
+        fig2 = prophet_model.plot_components(forecast)
         plt.show()
         
         #Time series forecasting after splitting the data
@@ -153,22 +157,15 @@ class DataUnderstanding:
         train_df.rename(columns={'date': 'ds', 'close': 'y'}, inplace=True)
         test_df.rename(columns={'date': 'ds', 'close': 'y'}, inplace=True)
         
-        model=Prophet()
+        model = Prophet()
         model.fit(train_df)
         forecast_on_test=model.predict(test_df[['ds']])
         
         #Plot of the forecast with actual data
-        plt.figure(figsize=(15, 5))
-        plt.scatter(test_df['ds'], test_df['y'], color='r', label='Actual')
-        model.plot(forecast_on_test, ax=plt.gca())
-        plt.xlabel('Date')
-        plt.ylabel('Close Price')
-        plt.title('Forecast for Litecoin Close Price')
-        plt.legend()
-        plt.show()
+        graph.forecast_with_actual_data(model, test_df, forecast_on_test)
         
         #Calculating MAE(Mean Absolute Error)
-        mae_accu=mean_absolute_error(y_true=test_df['y'], y_pred=forecast_on_test['yhat'])
+        mae_accu = mean_absolute_error(y_true=test_df['y'], y_pred=forecast_on_test['yhat'])
         print(f'Mean Absolute Error For Time series:{mae_accu}')
 
         # Calculating ROC curve and AUC for Logistic
@@ -180,12 +177,4 @@ class DataUnderstanding:
         roc_auc_xgb = roc_auc_score(y_test_class, y_pred_proba_xgb)
 
         # Plotting ROC curve for both models
-        plt.figure(figsize=(8, 6))
-        plt.plot(fpr_logistic, tpr_logistic, label=f'Logistic Regression (AUC = {roc_auc_logistic:.2f})')
-        plt.plot(fpr_xgb, tpr_xgb, label=f'XGBoost (AUC = {roc_auc_xgb:.2f})')
-        plt.plot([0, 1], [0, 1], 'k--')
-        plt.xlabel('False Positive Rate')
-        plt.ylabel('True Positive Rate')
-        plt.title('ROC Curve')
-        plt.legend(loc='lower right')
-        plt.show()
+        graph.roc_cure(fpr_logistic, tpr_logistic,roc_auc_logistic, fpr_xgb, tpr_xgb, roc_auc_xgb)
