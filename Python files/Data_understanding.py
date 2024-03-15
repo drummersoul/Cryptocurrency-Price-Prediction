@@ -97,7 +97,7 @@ class DataUnderstanding:
         scaler = StandardScaler()
         X = scaler.fit_transform(X)
 
-        X_train, X_test, y_train, y_test  = train_test_split(X, y, test_size=0.1, random_state=2022)
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1, random_state=2022)
 
         print(f"X_train: {X_train.shape}")
         print(f"X_test: {X_test.shape}")
@@ -122,7 +122,7 @@ class DataUnderstanding:
         reg_lambda = 1.0
         reg_alpha = 0.5
         learning_rate = 0.01
-        max_depth=3
+        max_depth = 3
         xgbclassifier = model.xgbclassifier(reg_lambda, reg_alpha, learning_rate, max_depth, X_train, X_test, y_train_class, y_test_class)
         train_acc_xgb, test_acc_xgb, y_pred_proba_xgb = xgbclassifier
 
@@ -143,7 +143,7 @@ class DataUnderstanding:
         future = prophet_model.make_future_dataframe(periods=3, freq='M')
         fig1 = prophet_model.plot(forecast)
         plt.show()
-        fig2=prophet_model.plot_components(forecast)
+        fig2 = prophet_model.plot_components(forecast)
         plt.show()
         
         #Time series forecasting after splitting the data
@@ -153,7 +153,7 @@ class DataUnderstanding:
         train_df.rename(columns={'date': 'ds', 'close': 'y'}, inplace=True)
         test_df.rename(columns={'date': 'ds', 'close': 'y'}, inplace=True)
         
-        model=Prophet()
+        model = Prophet()
         model.fit(train_df)
         forecast_on_test=model.predict(test_df[['ds']])
         
@@ -161,7 +161,7 @@ class DataUnderstanding:
         graph.forecast_with_actual_data(model, test_df, forecast_on_test)
         
         #Calculating MAE(Mean Absolute Error)
-        mae_accu=mean_absolute_error(y_true=test_df['y'], y_pred=forecast_on_test['yhat'])
+        mae_accu = mean_absolute_error(y_true=test_df['y'], y_pred=forecast_on_test['yhat'])
         print(f'Mean Absolute Error For Time series:{mae_accu}')
 
         # Calculating ROC curve and AUC for Logistic
