@@ -18,6 +18,7 @@ class Models:
 
         self.__shape_validation(x_train.shape, x_test.shape, y_train.shape, y_test.shape)
 
+        model_name = "Logistic Regression"
         print("Logistic Regression : ", end="\n\n")
         logistic_reg = LogisticRegression()
         logistic_reg.fit(x_train, y_train)
@@ -28,8 +29,11 @@ class Models:
         train_acc = accuracy_score(y_train, train_pred)
         test_acc = accuracy_score(y_test, test_pred)
 
-        logistic_reg_model = logistic_reg
-        y_pred_proba_logistic = logistic_reg_model.predict_proba(x_test)[:, 1]
+        y_pred_proba_logistic = logistic_reg.predict_proba(x_test)[:, 1]
+
+        # display confusion matrix, and classification report
+        self.display_classificiation_metrics(logistic_reg, x_test, y_test, model_name)
+
         return logistic_reg, train_acc, test_acc, y_pred_proba_logistic
 
     def xgbclassifier(self, reg_lambda: float, reg_alpha: float, learning_rate: float, max_depth: int, x_train : pd.DataFrame, x_test : pd.DataFrame, y_train : pd.Series, y_test : pd.Series):

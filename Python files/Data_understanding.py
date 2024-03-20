@@ -110,12 +110,9 @@ class DataUnderstanding:
         #LogisticRegression
         logistic_reg = model.logistic_regression(X_train, X_test, y_train_class, y_test_class)
 
-        trained_logistic_model, train_acc, test_acc, y_pred_proba_logistic = logistic_reg
+        train_acc, test_acc, y_pred_proba_logistic = logistic_reg
         print(f'Accuracy of Training: {train_acc}')
         print(f'Accuracy of Testing: {test_acc}')
-
-        #display confusion matrix, and classification report
-        model.display_classificiation_metrics(trained_logistic_model, X_test, y_test_class, 'Logistic Regression')
 
         #use XGBClassifier to tain a model and predict classes
 
@@ -153,12 +150,12 @@ class DataUnderstanding:
         train_df.rename(columns={'date': 'ds', 'close': 'y'}, inplace=True)
         test_df.rename(columns={'date': 'ds', 'close': 'y'}, inplace=True)
         
-        model = Prophet()
-        model.fit(train_df)
-        forecast_on_test=model.predict(test_df[['ds']])
+        prophet_model1 = Prophet()
+        prophet_model1.fit(train_df)
+        forecast_on_test = prophet_model1.predict(test_df[['ds']])
         
         #Plot of the forecast with actual data
-        graph.forecast_with_actual_data(model, test_df, forecast_on_test)
+        graph.forecast_with_actual_data(prophet_model1, test_df, forecast_on_test)
         
         #Calculating MAE(Mean Absolute Error)
         mae_accu = mean_absolute_error(y_true=test_df['y'], y_pred=forecast_on_test['yhat'])
