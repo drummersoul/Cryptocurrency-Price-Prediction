@@ -1,20 +1,15 @@
 import pandas as pd
 import matplotlib.pyplot as plt
-import seaborn as sb
 from utils.utils import get_data, get_specific_data
 import warnings  # Adding warning ignore to avoid issues with distplot
 import numpy as np
 
 from sklearn.metrics import roc_curve, roc_auc_score
 from sklearn.model_selection import train_test_split
-from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import accuracy_score, classification_report
 from graphs import Graphs
 from Ml_Models import Models
 from sklearn.preprocessing import StandardScaler
-from xgboost import XGBClassifier
 from prophet import Prophet
-from prophet.plot import add_changepoints_to_plot
 from sklearn.metrics import mean_absolute_error
 
 warnings.filterwarnings('ignore')
@@ -43,11 +38,11 @@ class DataUnderstanding:
         df['date'] = pd.to_datetime(df['date'])
 
         # Plot historical close price
-        graph.basicPlot(y = df['close'], title='Crypto Close Price', y_label= 'Price in Dollars')
+        graph.basicPlot(y = df['close'], title='Crypto Close Price', y_label= 'Price in Dollars', show_figure = True)
 
         # Define features for future use
         features = ['open', 'high', 'low', 'close']
-        graph.distPlotWithSubPlot(df, features = features, rows = 2, cols = 2)
+        graph.distPlotWithSubPlot(df, features = features, rows = 2, cols = 2, show_figure = True)
 
         # Extract the year from the 'date' column using the dt accessor in pandas
         df['year'] = df['date'].dt.year
