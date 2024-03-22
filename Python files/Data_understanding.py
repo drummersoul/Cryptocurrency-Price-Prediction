@@ -37,12 +37,15 @@ class DataUnderstanding:
         # Conver date object type to date type
         df['date'] = pd.to_datetime(df['date'])
 
+        #To decide if we want to show plots or not
+        show_figure = False
+
         # Plot historical close price
-        graph.basicPlot(y = df['close'], title='Crypto Close Price', y_label= 'Price in Dollars', show_figure = True)
+        graph.basicPlot(y = df['close'], title='Crypto Close Price', y_label= 'Price in Dollars', show_figure = show_figure)
 
         # Define features for future use
         features = ['open', 'high', 'low', 'close']
-        graph.distPlotWithSubPlot(df, features = features, rows = 2, cols = 2, show_figure = True)
+        graph.distPlotWithSubPlot(df, features = features, rows = 2, cols = 2, show_figure = show_figure)
 
         # Extract the year from the 'date' column using the dt accessor in pandas
         df['year'] = df['date'].dt.year
@@ -68,22 +71,22 @@ class DataUnderstanding:
 
         bar_plot_features = ['open', 'high', 'low', 'close']
         # Plot a bar chart for the current column using the grouped data
-        graph.barplotWithSubplot(data_grouped, bar_plot_features, 2, 2)
+        graph.barplotWithSubplot(data_grouped, bar_plot_features, 2, 2,show_figure = show_figure)
 
         # Keeping the columns for heatmap exploration
         sub_df = df[['open', 'high', 'low', 'close', 'marketCap', 'open_close', 'low_high', 'year', 'month', 'day', 'target']]
         sub_df.head()
 
         # Correlation for Litecoin crypto
-        graph.graphCorrelation(sub_df.iloc[:, 1:], "Correlation HeatMap for Litecoin")
+        graph.graphCorrelation(sub_df.iloc[:, 1:], "Correlation HeatMap for Litecoin",show_figure = show_figure)
 
         visualize_cols = ['open', 'high', 'low', 'marketCap']
 
         # ploting graph to check correlation
-        graph.scatterPlotWithSubPlot(sub_df, 'close', visualize_cols, 2, 2)
+        graph.scatterPlotWithSubPlot(sub_df, 'close', visualize_cols, 2, 2,show_figure = show_figure)
 
         # boxplot to check outliers with whisker_length(whis) of 1.5(default value)
-        graph.boxPlotWithSubplot(sub_df, visualize_cols, 2, 2)
+        graph.boxPlotWithSubplot(sub_df, visualize_cols, 2, 2,show_figure = show_figure)
         
         #feature and target variables for classification
         X = df[['open', 'high', 'low', 'marketCap', 'year', 'month', 'day']]
@@ -150,7 +153,7 @@ class DataUnderstanding:
         forecast_on_test = prophet_model1.predict(test_df[['ds']])
         
         #Plot of the forecast with actual data
-        graph.forecast_with_actual_data(prophet_model1, test_df, forecast_on_test)
+        graph.forecast_with_actual_data(prophet_model1, test_df, forecast_on_test,show_figure = show_figure)
         
         #Calculating MAE(Mean Absolute Error)
         mae_accu = mean_absolute_error(y_true=test_df['y'], y_pred=forecast_on_test['yhat'])
@@ -165,4 +168,4 @@ class DataUnderstanding:
         roc_auc_xgb = roc_auc_score(y_test_class, y_pred_proba_xgb)
 
         # Plotting ROC curve for both models
-        graph.roc_cure(fpr_logistic, tpr_logistic,roc_auc_logistic, fpr_xgb, tpr_xgb, roc_auc_xgb)
+        graph.roc_cure(fpr_logistic, tpr_logistic,roc_auc_logistic, fpr_xgb, tpr_xgb, roc_auc_xgb,show_figure = show_figure)
