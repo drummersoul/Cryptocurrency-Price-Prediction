@@ -10,14 +10,19 @@ class Graphs:
     def __init__(self) -> None:
         pass
 
-    def graphCorrelation(self, df : pd.DataFrame, title = "Correlation HeatMap"):
+    def graphCorrelation(self, df : pd.DataFrame, title = "Correlation HeatMap", show_figure : bool = True):
+        if(not show_figure):
+            return
         plt.figure("Correalation HeatMap")
         corr = df.corr(numeric_only=True, method= "spearman").round(2)
         sb.heatmap(corr, annot=True)
         plt.title(title, fontsize = 15)
         plt.show()
     
-    def basicPlot(self, y : list, x: list = None, title = "Basic Plot", x_label = "None", y_label = "None"):
+    def basicPlot(self, y : list, x: list = None, title = "Basic Plot", x_label = "None", y_label = "None"
+                  , show_figure : bool = True):
+        if(not show_figure):
+            return
         plt.figure("Basic Plot for One or Two Columns", figsize=(10, 5))
         if x is None:
             plt.plot(y)
@@ -28,7 +33,10 @@ class Graphs:
         plt.xlabel(x_label)
         plt.show() 
 
-    def distPlotWithSubPlot(self, df : pd.DataFrame, features : list = [], rows : int = 0, cols : int = 0):
+    def distPlotWithSubPlot(self, df : pd.DataFrame, features : list = [], rows : int = 0, cols : int = 0
+                            , show_figure : bool = True):
+        if(not show_figure):
+            return
         plt.figure("DistPlot's with subPlot")
         if(len(features) == 0):
             features = df.select_dtypes(include=np.number).columns.tolist()
@@ -46,7 +54,10 @@ class Graphs:
         plt.subplots_adjust(left=0.1, bottom=0.08, right=0.9, top=0.9, wspace=0.1, hspace=0.4)
         plt.show()
 
-    def barplotWithSubplot(self, df : pd.DataFrame, features : list = [], rows : int = 0, cols : int = 0):
+    def barplotWithSubplot(self, df : pd.DataFrame, features : list = [], rows : int = 0, cols : int = 0
+                           , show_figure : bool = True):
+        if(not show_figure):
+            return
         plt.figure("BarPlot's with subPlot")
         if(len(features) == 0):
             features = df.select_dtypes(include=np.number).columns.tolist()
@@ -67,7 +78,10 @@ class Graphs:
         # plt.subplots_adjust(left=0.1, bottom=0.08, right=0.9, top=0.9, wspace=0.1, hspace=0.4)
         plt.show()
 
-    def scatterPlotWithSubPlot(self, df: pd.DataFrame, target: str, features: list = [],  rows: int = 0, col: int = 0):
+    def scatterPlotWithSubPlot(self, df: pd.DataFrame, target: str, features: list = [],  rows: int = 0, col: int = 0
+                               , show_figure : bool = True):
+        if(not show_figure):
+            return
         plt.figure("Scatter Plot's with subPlot")
         if(len(features) == 0):
             features = df.select_dtypes(include=np.number).columns.tolist()
@@ -92,7 +106,10 @@ class Graphs:
         plt.show()
 
 
-    def scatterPlotWithSubPlotAndBestFitLine(self, df: pd.DataFrame, target: str, features: list = [],  rows: int = 0, col: int = 0):
+    def scatterPlotWithSubPlotAndBestFitLine(self, df: pd.DataFrame, target: str, features: list = [],  rows: int = 0
+                                             , col: int = 0, show_figure : bool = True):
+        if(not show_figure):
+            return
         plt.figure("Scatter Plot's with subPlot and bestfitline")
         if(len(features) == 0):
             features = df.select_dtypes(include=np.number).columns.tolist()
@@ -121,7 +138,10 @@ class Graphs:
         plt.show()
 
 
-    def boxPlotWithSubplot(self, df: pd.DataFrame, features: list = [],  rows: int = 0, cols: int = 0, wisker_length : float = 1.5):
+    def boxPlotWithSubplot(self, df: pd.DataFrame, features: list = [],  rows: int = 0, cols: int = 0
+                           , wisker_length : float = 1.5, show_figure : bool = True):
+        if(not show_figure):
+            return
         plt.figure("Boxplot's with subPlot")
         if(len(features) == 0):
             features = df.select_dtypes(include=np.number).columns.tolist()
@@ -161,7 +181,9 @@ class Graphs:
             return ( min_row if min_row > min_col else min_col, min_row if min_row < min_col else min_col)    
         
     def roc_cure(self, fpr_logistic : np.ndarray, tpr_logistic : np.ndarray, roc_auc_logistic : float, 
-                 fpr_xgb : np.ndarray, tpr_xgb : np.ndarray, roc_auc_xgb: float):
+                 fpr_xgb : np.ndarray, tpr_xgb : np.ndarray, roc_auc_xgb: float, show_figure : bool = True):
+        if(not show_figure):
+            return
         plt.figure(figsize=(8, 6))
         plt.plot(fpr_logistic, tpr_logistic, label=f'Logistic Regression (AUC = {roc_auc_logistic:.2f})')
         plt.plot(fpr_xgb, tpr_xgb, label=f'XGBoost (AUC = {roc_auc_xgb:.2f})')
@@ -172,7 +194,10 @@ class Graphs:
         plt.legend(loc='lower right')
         plt.show()
 
-    def forecast_with_actual_data(self, model : Prophet, test_df : pd.DataFrame, forecast_on_test : pd.DataFrame):
+    def forecast_with_actual_data(self, model : Prophet, test_df : pd.DataFrame, forecast_on_test : pd.DataFrame
+                                  , show_figure : bool = True):
+        if(not show_figure):
+            return
         plt.figure(figsize=(15, 5))
         plt.scatter(test_df['ds'], test_df['y'], color='r', label='Actual')
         model.plot(forecast_on_test, ax=plt.gca())
