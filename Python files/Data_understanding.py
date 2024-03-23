@@ -1,14 +1,24 @@
 import pandas as pd
 import matplotlib.pyplot as plt
+<<<<<<< Updated upstream
 import seaborn as sb
+=======
+from xgboost import XGBClassifier
+
+>>>>>>> Stashed changes
 from utils.utils import get_data, get_specific_data
 import warnings  # Adding warning ignore to avoid issues with distplot
 import numpy as np
 
+<<<<<<< Updated upstream
 from sklearn.metrics import roc_curve, roc_auc_score
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score, classification_report
+=======
+from sklearn.metrics import roc_curve, roc_auc_score, accuracy_score
+from sklearn.model_selection import train_test_split, GridSearchCV
+>>>>>>> Stashed changes
 from graphs import Graphs
 from Ml_Models import Models
 from sklearn.preprocessing import StandardScaler
@@ -125,6 +135,35 @@ class DataUnderstanding:
         max_depth=3
         xgbclassifier = model.xgbclassifier(reg_lambda, reg_alpha, learning_rate, max_depth, X_train, X_test, y_train_class, y_test_class)
         train_acc_xgb, test_acc_xgb, y_pred_proba_xgb = xgbclassifier
+
+        # Define the parameter grid for grid search
+        param_grid = {
+            'learning_rate': [0.01, 0.1, 0.2],
+            'max_depth': [3, 4, 5],
+            'reg_lambda': [0.1, 0.5, 1.0],
+            'reg_alpha': [0, 0.1, 0.5]
+        }
+
+        # Create an XGBoost classifier model
+        xgb_model = XGBClassifier()
+
+        # Create a GridSearchCV object
+        grid_search = GridSearchCV(estimator=xgb_model, param_grid=param_grid, cv=5, scoring='accuracy', verbose=2,
+                                   n_jobs=-1)
+
+        # Perform grid search on the training data
+        grid_search.fit(X_train, y_train_class)
+
+        # Get the best parameters and best estimator
+        best_params_xgb = grid_search.best_params_
+        best_xgb_model = grid_search.best_estimator_
+
+        # Evaluate the best model on the test set
+        y_pred_xgb = best_xgb_model.predict(X_test)
+        test_accuracy_xgb = accuracy_score(y_test_class, y_pred_xgb)
+
+        print("Best Parameters for XGBoost Classifier:", best_params_xgb)
+        print("Test Accuracy for XGBoost Classifier:", test_accuracy_xgb)
 
         print("Evaluation results for XGBClassifier:")
         print(f"training set accuracy: {train_acc_xgb}")
