@@ -11,7 +11,10 @@ from Ml_Models import Models
 from sklearn.preprocessing import StandardScaler
 from prophet import Prophet
 from sklearn.metrics import mean_absolute_error
-
+from prophet.plot import (plot_plotly, 
+                            plot_components_plotly,
+                            plot_forecast_component)
+from prophet.plot import plot_forecast_component
 warnings.filterwarnings('ignore')
 
 class DataUnderstanding:
@@ -127,10 +130,10 @@ class DataUnderstanding:
 
         prophet_data = df[['date','close']].copy()
         prophet_data.columns = ['ds', 'y']
-
+        
         #Rename columns to 'ds' and 'y'
-
         prophet_model = Prophet()
+        prophet_model.add_country_holidays(country_name='US')
         prophet_model.fit(prophet_data)
 
         future = prophet_model.make_future_dataframe(periods=365)
@@ -169,3 +172,4 @@ class DataUnderstanding:
 
         # Plotting ROC curve for both models
         graph.roc_cure(fpr_logistic, tpr_logistic,roc_auc_logistic, fpr_xgb, tpr_xgb, roc_auc_xgb,show_figure = show_figure)
+    
