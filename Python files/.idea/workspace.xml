@@ -28,10 +28,11 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "Python.Data_understanding.executor": "Run",
+    "Python.Ml_Models.executor": "Run",
     "Python.main.executor": "Run",
     "RunOnceActivity.OpenProjectViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "main",
+    "git-widget-placeholder": "mayisha__week__ten",
     "settings.editor.selected.configurable": "com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable"
   }
 }]]></component>

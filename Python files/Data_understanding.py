@@ -1,44 +1,34 @@
 import pandas as pd
 import matplotlib.pyplot as plt
-<<<<<<< Updated upstream
-import seaborn as sb
-=======
-from xgboost import XGBClassifier
-
->>>>>>> Stashed changes
 from utils.utils import get_data, get_specific_data
 import warnings  # Adding warning ignore to avoid issues with distplot
 import numpy as np
 
-<<<<<<< Updated upstream
 from sklearn.metrics import roc_curve, roc_auc_score
 from sklearn.model_selection import train_test_split
-from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import accuracy_score, classification_report
-=======
-from sklearn.metrics import roc_curve, roc_auc_score, accuracy_score
-from sklearn.model_selection import train_test_split, GridSearchCV
->>>>>>> Stashed changes
 from graphs import Graphs
 from Ml_Models import Models
 from sklearn.preprocessing import StandardScaler
-from xgboost import XGBClassifier
 from prophet import Prophet
-from prophet.plot import add_changepoints_to_plot
 from sklearn.metrics import mean_absolute_error
+from prophet.plot import (plot_plotly,
+                          plot_components_plotly,
+                          plot_forecast_component)
+from prophet.plot import plot_forecast_component
 
 warnings.filterwarnings('ignore')
+
 
 class DataUnderstanding:
 
     def __init__(self) -> None:
         pass
 
-    def data_understanding(self, file_name : str):
+    def data_understanding(self, file_name: str):
         # Read dataset and display basic information
         df = get_data(file_name)
 
-        #instantiating Graph & Model classes
+        # instantiating Graph & Model classes
         graph = Graphs()
         model = Models()
 
@@ -52,12 +42,15 @@ class DataUnderstanding:
         # Conver date object type to date type
         df['date'] = pd.to_datetime(df['date'])
 
+        # To decide if we want to show plots or not
+        show_figure = False
+
         # Plot historical close price
-        graph.basicPlot(y = df['close'], title='Crypto Close Price', y_label= 'Price in Dollars')
+        graph.basicPlot(y=df['close'], title='Crypto Close Price', y_label='Price in Dollars', show_figure=show_figure)
 
         # Define features for future use
         features = ['open', 'high', 'low', 'close']
-        graph.distPlotWithSubPlot(df, features = features, rows = 2, cols = 2)
+        graph.distPlotWithSubPlot(df, features=features, rows=2, cols=2, show_figure=show_figure)
 
         # Extract the year from the 'date' column using the dt accessor in pandas
         df['year'] = df['date'].dt.year
@@ -65,7 +58,7 @@ class DataUnderstanding:
         df['month'] = df['date'].dt.month
         # Extract the day from the 'date' column using the dt accessor in pandas
         df['day'] = df['date'].dt.day
-        #new features derived using existing features
+        # new features derived using existing features
         df['open_close'] = df['open'] - df['close']
         df['low_high'] = df['low'] - df['high']
         df['MA7'] = df['close'].rolling(window=7).mean()
@@ -83,31 +76,32 @@ class DataUnderstanding:
 
         bar_plot_features = ['open', 'high', 'low', 'close']
         # Plot a bar chart for the current column using the grouped data
-        graph.barplotWithSubplot(data_grouped, bar_plot_features, 2, 2)
+        graph.barplotWithSubplot(data_grouped, bar_plot_features, 2, 2, show_figure=show_figure)
 
         # Keeping the columns for heatmap exploration
-        sub_df = df[['open', 'high', 'low', 'close', 'marketCap', 'open_close', 'low_high', 'year', 'month', 'day', 'target']]
+        sub_df = df[
+            ['open', 'high', 'low', 'close', 'marketCap', 'open_close', 'low_high', 'year', 'month', 'day', 'target']]
         sub_df.head()
 
         # Correlation for Litecoin crypto
-        graph.graphCorrelation(sub_df.iloc[:, 1:], "Correlation HeatMap for Litecoin")
+        graph.graphCorrelation(sub_df.iloc[:, 1:], "Correlation HeatMap for Litecoin", show_figure=show_figure)
 
         visualize_cols = ['open', 'high', 'low', 'marketCap']
 
         # ploting graph to check correlation
-        graph.scatterPlotWithSubPlot(sub_df, 'close', visualize_cols, 2, 2)
+        graph.scatterPlotWithSubPlot(sub_df, 'close', visualize_cols, 2, 2, show_figure=show_figure)
 
         # boxplot to check outliers with whisker_length(whis) of 1.5(default value)
-        graph.boxPlotWithSubplot(sub_df, visualize_cols, 2, 2)
-        
-        #feature and target variables for classification
+        graph.boxPlotWithSubplot(sub_df, visualize_cols, 2, 2, show_figure=show_figure)
+
+        # feature and target variables for classification
         X = df[['open', 'high', 'low', 'marketCap', 'year', 'month', 'day']]
         y = df['close']
 
         scaler = StandardScaler()
         X = scaler.fit_transform(X)
 
-        X_train, X_test, y_train, y_test  = train_test_split(X, y, test_size=0.1, random_state=2022)
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1, random_state=2022)
 
         print(f"X_train: {X_train.shape}")
         print(f"X_test: {X_test.shape}")
@@ -117,64 +111,33 @@ class DataUnderstanding:
         y_train_class = (y_train.shift(-1) > y_train).astype(int)
         y_test_class = (y_test.shift(-1) > y_test).astype(int)
 
-        #LogisticRegression
+        # LogisticRegression
         logistic_reg = model.logistic_regression(X_train, X_test, y_train_class, y_test_class)
 
-        trained_logistic_model, train_acc, test_acc, y_pred_proba_logistic = logistic_reg
+        train_acc, test_acc, y_pred_proba_logistic = logistic_reg
         print(f'Accuracy of Training: {train_acc}')
         print(f'Accuracy of Testing: {test_acc}')
 
-        #display confusion matrix, and classification report
-        Models.display_classificiation_metrics(trained_logistic_model, X_test, y_test_class)
-
-        #use XGBClassifier to tain a model and predict classes
+        # use XGBClassifier to tain a model and predict classes
 
         reg_lambda = 1.0
         reg_alpha = 0.5
         learning_rate = 0.01
-        max_depth=3
-        xgbclassifier = model.xgbclassifier(reg_lambda, reg_alpha, learning_rate, max_depth, X_train, X_test, y_train_class, y_test_class)
+        max_depth = 3
+        xgbclassifier = model.xgbclassifier(reg_lambda, reg_alpha, learning_rate, max_depth, X_train, X_test,
+                                            y_train_class, y_test_class)
         train_acc_xgb, test_acc_xgb, y_pred_proba_xgb = xgbclassifier
-
-        # Define the parameter grid for grid search
-        param_grid = {
-            'learning_rate': [0.01, 0.1, 0.2],
-            'max_depth': [3, 4, 5],
-            'reg_lambda': [0.1, 0.5, 1.0],
-            'reg_alpha': [0, 0.1, 0.5]
-        }
-
-        # Create an XGBoost classifier model
-        xgb_model = XGBClassifier()
-
-        # Create a GridSearchCV object
-        grid_search = GridSearchCV(estimator=xgb_model, param_grid=param_grid, cv=5, scoring='accuracy', verbose=2,
-                                   n_jobs=-1)
-
-        # Perform grid search on the training data
-        grid_search.fit(X_train, y_train_class)
-
-        # Get the best parameters and best estimator
-        best_params_xgb = grid_search.best_params_
-        best_xgb_model = grid_search.best_estimator_
-
-        # Evaluate the best model on the test set
-        y_pred_xgb = best_xgb_model.predict(X_test)
-        test_accuracy_xgb = accuracy_score(y_test_class, y_pred_xgb)
-
-        print("Best Parameters for XGBoost Classifier:", best_params_xgb)
-        print("Test Accuracy for XGBoost Classifier:", test_accuracy_xgb)
 
         print("Evaluation results for XGBClassifier:")
         print(f"training set accuracy: {train_acc_xgb}")
         print(f"test set accuracy: {test_acc_xgb}")
 
-        prophet_data = df[['date','close']].copy()
+        prophet_data = df[['date', 'close']].copy()
         prophet_data.columns = ['ds', 'y']
 
-        #Rename columns to 'ds' and 'y'
-
+        # Rename columns to 'ds' and 'y'
         prophet_model = Prophet()
+        prophet_model.add_country_holidays(country_name='US')
         prophet_model.fit(prophet_data)
 
         future = prophet_model.make_future_dataframe(periods=365)
@@ -182,32 +145,25 @@ class DataUnderstanding:
         future = prophet_model.make_future_dataframe(periods=3, freq='M')
         fig1 = prophet_model.plot(forecast)
         plt.show()
-        fig2=prophet_model.plot_components(forecast)
+        fig2 = prophet_model.plot_components(forecast)
         plt.show()
-        
-        #Time series forecasting after splitting the data
+
+        # Time series forecasting after splitting the data
         split_date = '2021-04-01'
         train_df = df[df['date'] <= split_date].copy()
         test_df = df[df['date'] > split_date].copy()
         train_df.rename(columns={'date': 'ds', 'close': 'y'}, inplace=True)
         test_df.rename(columns={'date': 'ds', 'close': 'y'}, inplace=True)
-        
-        model=Prophet()
-        model.fit(train_df)
-        forecast_on_test=model.predict(test_df[['ds']])
-        
-        #Plot of the forecast with actual data
-        plt.figure(figsize=(15, 5))
-        plt.scatter(test_df['ds'], test_df['y'], color='r', label='Actual')
-        model.plot(forecast_on_test, ax=plt.gca())
-        plt.xlabel('Date')
-        plt.ylabel('Close Price')
-        plt.title('Forecast for Litecoin Close Price')
-        plt.legend()
-        plt.show()
-        
-        #Calculating MAE(Mean Absolute Error)
-        mae_accu=mean_absolute_error(y_true=test_df['y'], y_pred=forecast_on_test['yhat'])
+
+        prophet_model1 = Prophet()
+        prophet_model1.fit(train_df)
+        forecast_on_test = prophet_model1.predict(test_df[['ds']])
+
+        # Plot of the forecast with actual data
+        graph.forecast_with_actual_data(prophet_model1, test_df, forecast_on_test, show_figure=show_figure)
+
+        # Calculating MAE(Mean Absolute Error)
+        mae_accu = mean_absolute_error(y_true=test_df['y'], y_pred=forecast_on_test['yhat'])
         print(f'Mean Absolute Error For Time series:{mae_accu}')
 
         # Calculating ROC curve and AUC for Logistic
@@ -219,12 +175,5 @@ class DataUnderstanding:
         roc_auc_xgb = roc_auc_score(y_test_class, y_pred_proba_xgb)
 
         # Plotting ROC curve for both models
-        plt.figure(figsize=(8, 6))
-        plt.plot(fpr_logistic, tpr_logistic, label=f'Logistic Regression (AUC = {roc_auc_logistic:.2f})')
-        plt.plot(fpr_xgb, tpr_xgb, label=f'XGBoost (AUC = {roc_auc_xgb:.2f})')
-        plt.plot([0, 1], [0, 1], 'k--')
-        plt.xlabel('False Positive Rate')
-        plt.ylabel('True Positive Rate')
-        plt.title('ROC Curve')
-        plt.legend(loc='lower right')
-        plt.show()
+        graph.roc_cure(fpr_logistic, tpr_logistic, roc_auc_logistic, fpr_xgb, tpr_xgb, roc_auc_xgb,
+                       show_figure=show_figure)

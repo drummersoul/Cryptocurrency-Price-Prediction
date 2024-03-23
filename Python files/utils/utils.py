@@ -5,9 +5,11 @@ def get_csv_file(file_name):
     # Get the current working directory
     current_directory = os.getcwd()
 
+    current_directory = current_directory.strip('/')
+    file_name = file_name.strip('/')
     # Specify the relative path to the CSV file from the current directory
     print(current_directory)
-    csv_file_location = os.path.join(current_directory,"..", "Excel DB", file_name)
+    csv_file_location = os.path.join(current_directory,"Excel DB", file_name)
 
     return csv_file_location
 
