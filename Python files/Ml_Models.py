@@ -8,6 +8,7 @@ from sklearn.metrics import ConfusionMatrixDisplay, accuracy_score, precision_sc
 from yellowbrick.classifier import ClassPredictionError
 import matplotlib.pyplot as plt
 from sklearn.model_selection import cross_val_score, GridSearchCV
+from sklearn.ensemble import RandomForestClassifier
 
 class Models:
 
@@ -90,7 +91,6 @@ class Models:
         y_test_predicted = trained_classifier.predict(X_test)
         #display confusion matrix
         ConfusionMatrixDisplay.from_predictions(y_test, y_test_predicted)
-        print(model_name)
         plt.title(f'confusion matrix for {model_name} test data')
         plt.show()
         #print precision, recall, f1_score with respect to class with label 1 and accuracy
@@ -110,7 +110,10 @@ class Models:
         visualizer.show()
 
 
-    def xgb_booster_gcv(self, x_train, x_test, y_train, y_test):
+    def xgb_gcv(self, x_train : pd.DataFrame, x_test : pd.DataFrame, y_train : pd.Series, y_test : pd.Series):
+
+        self.__shape_validation(x_train.shape, x_test.shape, y_train.shape, y_test.shape)
+
         param_grid = {
             'max_depth': [-1, 3, 5],
             'learning_rate': [0.001,0.01,0.05], 
@@ -148,3 +151,23 @@ class Models:
         print('Recall of test is '+ str(recall_score(y_test,grid_search.predict(x_test))))
         print('F1 of test is '+ str(f1_score(y_test,grid_search.predict(x_test))))
         print('ROC AUC of test is '+ str(roc_auc_score(y_test,grid_search.predict(x_test))))
+
+    def random_forest(self, x_train : pd.DataFrame, x_test : pd.DataFrame, y_train : pd.Series, y_test : pd.Series):
+
+        self.__shape_validation(x_train.shape, x_test.shape, y_train.shape, y_test.shape)
+
+        model_name = "Random Forest"
+        print("Random Forest : ", end="\n\n")
+        rf = RandomForestClassifier()
+        rf.fit(x_train, y_train)
+
+        rf_train_pred = rf.predict(x_train)
+        rf_y_pred = rf.predict(x_test)
+
+        train_acc = accuracy_score(y_train, rf_train_pred)
+        test_acc = accuracy_score(y_test, rf_y_pred)
+
+        #display confusion matrix
+        self.display_classificiation_metrics(rf, x_test, y_test, model_name)
+
+        return train_acc, test_acc, rf_y_pred
