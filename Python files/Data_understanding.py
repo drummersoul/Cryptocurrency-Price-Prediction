@@ -41,6 +41,21 @@ class DataUnderstanding:
         # Conver date object type to date type
         df['date'] = pd.to_datetime(df['date'])
 
+        #Created a new dataframe to store newly create date column
+        new_df=pd.DataFrame()
+        new_df['m_date']=df['date']
+        
+        #In this section we will check for the number of missing dates
+        new_df =new_df.set_index('m_date')
+        
+        #Create a full date range from the start to the end of your dataset
+        date_range=pd.date_range(start=new_df.index.min(),end=new_df.index.max())
+        
+        #Identify missing dates by finding those which are not in your Datafreme's index
+        missing_dates=date_range.difference(new_df.index)
+        print(f'Missing Date:{missing_dates}')
+        print(f'Missing Date Size{missing_dates.size}')
+    
         #To decide if we want to show plots or not
         show_figure = False
 
