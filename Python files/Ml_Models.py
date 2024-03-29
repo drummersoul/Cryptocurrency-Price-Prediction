@@ -7,6 +7,7 @@ from sklearn.metrics import classification_report
 from sklearn.metrics import ConfusionMatrixDisplay
 from yellowbrick.classifier import ClassPredictionError
 import matplotlib.pyplot as plt
+from sklearn.ensemble import RandomForestClassifier
 
 class Models:
 
@@ -106,3 +107,23 @@ class Models:
 
         # Draw visualization
         visualizer.show()
+
+    def random_forest(self, x_train : pd.DataFrame, x_test : pd.DataFrame, y_train : pd.Series, y_test : pd.Series):
+
+        self.__shape_validation(x_train.shape, x_test.shape, y_train.shape, y_test.shape)
+
+        model_name = "Random Forest"
+        print("Random Forest : ", end="\n\n")
+        rf = RandomForestClassifier()
+        rf.fit(x_train, y_train)
+
+        rf_train_pred = rf.predict(x_train)
+        rf_y_pred = rf.predict(x_test)
+
+        train_acc = accuracy_score(y_train, rf_train_pred)
+        test_acc = accuracy_score(y_test, rf_y_pred)
+
+        #display confusion matrix
+        self.display_classificiation_metrics(rf, x_test, y_test, model_name)
+
+        return train_acc, test_acc, rf_y_pred

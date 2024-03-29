@@ -172,4 +172,15 @@ class DataUnderstanding:
 
         # Plotting ROC curve for both models
         graph.roc_cure(fpr_logistic, tpr_logistic,roc_auc_logistic, fpr_xgb, tpr_xgb, roc_auc_xgb,show_figure = show_figure)
-    
+
+        #Random Forest Algorithem
+        train_acc, test_acc, rf_y_pred = model.random_forest(X_train, X_test, y_train_class, y_test_class)
+        print(" Random Forest -- Train Accuracy ==>> ", train_acc)
+        print(" Random Forest -- Test Accuracy ==>> ", test_acc)
+
+        #ploting Roc-curve for Random Forest
+        fpr_rf, tpr_rf, threshold_rf = roc_curve(y_test_class, rf_y_pred)
+        
+        #Area under curve (auc)
+        roc_auc_rf = roc_auc_score(y_test_class, rf_y_pred)
+        graph.roc_cure_for_one_model(fpr_rf, tpr_rf, roc_auc_rf)
