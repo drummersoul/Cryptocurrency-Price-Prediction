@@ -4,9 +4,10 @@ from sklearn.linear_model import LinearRegression, LogisticRegression #, SGDRegr
 from sklearn.metrics import accuracy_score, mean_squared_error, r2_score
 from xgboost import XGBClassifier
 from sklearn.metrics import classification_report
-from sklearn.metrics import ConfusionMatrixDisplay
+from sklearn.metrics import ConfusionMatrixDisplay, accuracy_score, precision_score, recall_score, f1_score, roc_auc_score
 from yellowbrick.classifier import ClassPredictionError
 import matplotlib.pyplot as plt
+from sklearn.model_selection import cross_val_score, GridSearchCV
 
 class Models:
 
@@ -89,6 +90,7 @@ class Models:
         y_test_predicted = trained_classifier.predict(X_test)
         #display confusion matrix
         ConfusionMatrixDisplay.from_predictions(y_test, y_test_predicted)
+        print(model_name)
         plt.title(f'confusion matrix for {model_name} test data')
         plt.show()
         #print precision, recall, f1_score with respect to class with label 1 and accuracy
@@ -106,3 +108,43 @@ class Models:
 
         # Draw visualization
         visualizer.show()
+
+
+    def xgb_booster_gcv(self, x_train, x_test, y_train, y_test):
+        param_grid = {
+            'max_depth': [-1, 3, 5],
+            'learning_rate': [0.001,0.01,0.05], 
+            'n_estimators': [500,1000], #Number of fitted trees       
+            'subsample': [0.8, 0.9], #Subsample number           
+            'colsample_bytree': [0.8, 0.9] #number of colsample bytree
+        }
+
+        xgb_grid = XGBClassifier(random_state = 42)
+        # Setup RandomizedSearchCV
+        grid_search = GridSearchCV(
+            estimator=xgb_grid, 
+            scoring= 'f1',
+            param_grid=param_grid, 
+            cv=10, 
+            verbose=1, 
+            n_jobs=-1  # Use all available cores
+        )
+
+        # Perform the random search
+        grid_search.fit(x_train, y_train)
+
+        # Best parameters and best score
+        print("Best parameters found: ", grid_search.best_params_)
+        print("Best score found: ", grid_search.best_score_)
+
+        print('Accuracy of training is '+ str(accuracy_score(y_train,grid_search.predict(x_train))))
+        print('Precision of training is '+ str(precision_score(y_train,grid_search.predict(x_train))))
+        print('Recall of training is '+ str(recall_score(y_train,grid_search.predict(x_train))))
+        print('F1 of training is '+ str(f1_score(y_train,grid_search.predict(x_train))))
+        print('ROC AUC of training is '+ str(roc_auc_score(y_train,grid_search.predict(x_train))))
+        print()
+        print('Accuracy of test is '+ str(accuracy_score(y_test,grid_search.predict(x_test))))
+        print('Precision of test is '+ str(precision_score(y_test,grid_search.predict(x_test))))
+        print('Recall of test is '+ str(recall_score(y_test,grid_search.predict(x_test))))
+        print('F1 of test is '+ str(f1_score(y_test,grid_search.predict(x_test))))
+        print('ROC AUC of test is '+ str(roc_auc_score(y_test,grid_search.predict(x_test))))
