@@ -8,7 +8,7 @@ from sklearn.metrics import roc_curve, roc_auc_score
 from sklearn.model_selection import train_test_split,TimeSeriesSplit,cross_val_score
 from xgboost import XGBClassifier
 from graphs import Graphs
-from Ml_Models import Models
+from ml_models import Models
 from sklearn.preprocessing import StandardScaler
 from prophet import Prophet
 from sklearn.metrics import mean_absolute_error
