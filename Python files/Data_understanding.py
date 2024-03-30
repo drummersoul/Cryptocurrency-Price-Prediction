@@ -132,6 +132,7 @@ class DataUnderstanding:
         print(f'Accuracy of Testing: {test_acc}')
 
         model.xgb_gcv(X_train, X_test, y_train_class, y_test_class)
+        model.logr_gcv(X_train, X_test, y_train_class, y_test_class)
 
         #use XGBClassifier to tain a model and predict classes
 
