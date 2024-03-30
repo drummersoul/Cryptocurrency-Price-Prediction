@@ -250,3 +250,10 @@ class DataUnderstanding:
 
         print("KNN - Train Accuracy:", train_acc_knn)
         print("KNN - Test Accuracy:", test_acc_knn)
+
+         # Calculate ROC curve and AUC for KNN
+        fpr_knn, tpr_knn, thresholds_knn = roc_curve(y_test_class, y_pred_knn)
+        roc_auc_knn = roc_auc_score(y_test_class, y_pred_knn)
+
+        # Plot ROC curve for KNN
+        graph.roc_cure_for_one_model(fpr_knn, tpr_knn, roc_auc_knn)
