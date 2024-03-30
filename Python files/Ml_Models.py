@@ -133,24 +133,7 @@ class Models:
             n_jobs=-1  # Use all available cores
         )
 
-        # Perform the random search
-        grid_search.fit(x_train, y_train)
-
-        # Best parameters and best score
-        print("Best parameters found: ", grid_search.best_params_)
-        print("Best score found: ", grid_search.best_score_)
-
-        print('Accuracy of training is '+ str(accuracy_score(y_train,grid_search.predict(x_train))))
-        print('Precision of training is '+ str(precision_score(y_train,grid_search.predict(x_train))))
-        print('Recall of training is '+ str(recall_score(y_train,grid_search.predict(x_train))))
-        print('F1 of training is '+ str(f1_score(y_train,grid_search.predict(x_train))))
-        print('ROC AUC of training is '+ str(roc_auc_score(y_train,grid_search.predict(x_train))))
-        print()
-        print('Accuracy of test is '+ str(accuracy_score(y_test,grid_search.predict(x_test))))
-        print('Precision of test is '+ str(precision_score(y_test,grid_search.predict(x_test))))
-        print('Recall of test is '+ str(recall_score(y_test,grid_search.predict(x_test))))
-        print('F1 of test is '+ str(f1_score(y_test,grid_search.predict(x_test))))
-        print('ROC AUC of test is '+ str(roc_auc_score(y_test,grid_search.predict(x_test))))
+        self.display_grid_search_result(grid_search, x_train, x_test, y_train, y_test)
 
     def random_forest(self, x_train : pd.DataFrame, x_test : pd.DataFrame, y_train : pd.Series, y_test : pd.Series):
 
@@ -171,3 +154,53 @@ class Models:
         self.display_classificiation_metrics(rf, x_test, y_test, model_name)
 
         return train_acc, test_acc, rf_y_pred
+
+    def logr_gcv(self, x_train: pd.DataFrame, x_test: pd.DataFrame, y_train: pd.Series, y_test: pd.Series):
+
+        self.__shape_validation(x_train.shape, x_test.shape, y_train.shape, y_test.shape)
+        # Define logistic regression model
+        logistic_reg_model = LogisticRegression()
+
+        # Define the search space for hyperparameters
+        param_grid = {
+            'penalty': ['l1', 'l2'],
+            'C': [0.001, 0.01, 0.1, 1, 5, 10, 100],
+            'solver': ['newton-cg', 'lbfgs', 'liblinear', 'sag', 'saga'],
+            'max_iter': [100, 200, 500],
+        }
+
+        # Define scoring metrics
+        scoring = ['f1', 'neg_log_loss']  # Example metrics
+        # Create GridSearchCV object
+        grid_search = GridSearchCV(
+                    estimator=logistic_reg_model,
+                    param_grid=param_grid,
+                    scoring=scoring,
+                    refit='f1',  
+                    cv=10,
+                    verbose=0,
+                    n_jobs=-1)
+        
+        self.display_grid_search_result(grid_search, x_train, x_test, y_train, y_test)
+        
+
+    def display_grid_search_result(self, grid_search, x_train: pd.DataFrame, x_test: pd.DataFrame, y_train: pd.Series, y_test: pd.Series):
+
+        # Perform the random search
+        grid_search.fit(x_train, y_train)
+
+        # Best parameters and best score
+        print("Best parameters found: ", grid_search.best_params_)
+        print("Best score found: ", grid_search.best_score_)
+
+        print('Accuracy of training is '+ str(accuracy_score(y_train,grid_search.predict(x_train))))
+        print('Precision of training is '+ str(precision_score(y_train,grid_search.predict(x_train))))
+        print('Recall of training is '+ str(recall_score(y_train,grid_search.predict(x_train))))
+        print('F1 of training is '+ str(f1_score(y_train,grid_search.predict(x_train))))
+        print('ROC AUC of training is '+ str(roc_auc_score(y_train,grid_search.predict(x_train))))
+        print()
+        print('Accuracy of test is '+ str(accuracy_score(y_test,grid_search.predict(x_test))))
+        print('Precision of test is '+ str(precision_score(y_test,grid_search.predict(x_test))))
+        print('Recall of test is '+ str(recall_score(y_test,grid_search.predict(x_test))))
+        print('F1 of test is '+ str(f1_score(y_test,grid_search.predict(x_test))))
+        print('ROC AUC of test is '+ str(roc_auc_score(y_test,grid_search.predict(x_test))))
