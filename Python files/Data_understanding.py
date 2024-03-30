@@ -3,9 +3,10 @@ import matplotlib.pyplot as plt
 from utils.utils import get_data, get_specific_data
 import warnings  # Adding warning ignore to avoid issues with distplot
 import numpy as np
-
+from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import roc_curve, roc_auc_score
-from sklearn.model_selection import train_test_split
+from sklearn.model_selection import train_test_split,TimeSeriesSplit,cross_val_score
+from xgboost import XGBClassifier
 from graphs import Graphs
 from Ml_Models import Models
 from sklearn.preprocessing import StandardScaler
@@ -126,6 +127,14 @@ class DataUnderstanding:
 
         #LogisticRegression
         logistic_reg = model.logistic_regression(X_train, X_test, y_train_class, y_test_class)
+        tscv = TimeSeriesSplit(n_splits=5)
+        logistic_reg_model = LogisticRegression()
+        cv_scores = cross_val_score(logistic_reg_model, X_train, y_train_class, cv=tscv)
+        # Print cross-validation scores
+        print("Cross-validation scores LOG_REG:", cv_scores)
+        # Print mean and standard deviation of cross-validation scores
+        print("Mean CV score LOG_REG:", cv_scores.mean())
+        print("Standard deviation of CV scores LOG_REG:", cv_scores.std())
 
         train_acc, test_acc, y_pred_proba_logistic = logistic_reg
         print(f'Accuracy of Training: {train_acc}')
@@ -141,7 +150,14 @@ class DataUnderstanding:
         max_depth = 3
         xgbclassifier = model.xgbclassifier(reg_lambda, reg_alpha, learning_rate, max_depth, X_train, X_test, y_train_class, y_test_class)
         train_acc_xgb, test_acc_xgb, y_pred_proba_xgb = xgbclassifier
-
+        tscv = TimeSeriesSplit(n_splits=5)
+        xgb_cv_model = XGBClassifier()
+        cv_scores_xgb = cross_val_score(xgb_cv_model, X_train, y_train_class, cv=tscv)
+        # Print cross-validation scores
+        print("Cross-validation scores XGB:", cv_scores_xgb)
+        # Print mean and standard deviation of cross-validation scores
+        print("Mean CV score XGB:", cv_scores_xgb.mean())
+        print("Standard deviation of CV scores XGB:", cv_scores_xgb.std())
         print("Evaluation results for XGBClassifier:")
         print(f"training set accuracy: {train_acc_xgb}")
         print(f"test set accuracy: {test_acc_xgb}")
