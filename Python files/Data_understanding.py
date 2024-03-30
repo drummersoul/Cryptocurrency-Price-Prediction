@@ -115,7 +115,16 @@ class DataUnderstanding:
         scaler = StandardScaler()
         X = scaler.fit_transform(X)
 
-        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1, random_state=2022)
+        # X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.1, random_state=2022)
+
+        #calculate the index for the split
+        splitting_index = int(len(df) * 0.8)
+
+        #split data without shuffling
+        X_train = X[:splitting_index]
+        X_test = X[splitting_index:]
+        y_train = y[:splitting_index]
+        y_test = y[splitting_index:]
 
         print(f"X_train: {X_train.shape}")
         print(f"X_test: {X_test.shape}")
@@ -124,6 +133,10 @@ class DataUnderstanding:
 
         y_train_class = (y_train.shift(-1) > y_train).astype(int)
         y_test_class = (y_test.shift(-1) > y_test).astype(int)
+
+        #testing for class counts
+        print("class counts of train_data:")
+        print(y_train_class.value_counts()) 
 
         #LogisticRegression
         logistic_reg = model.logistic_regression(X_train, X_test, y_train_class, y_test_class)
