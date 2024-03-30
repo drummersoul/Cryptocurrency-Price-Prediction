@@ -1,6 +1,6 @@
-from Data_understanding import DataUnderstanding
+from data_understanding import DataUnderstanding
 
-def run(file_name : str = 'Crypto_data_info.csv'):
+def run(file_name : str = 'crypto_data_info.csv'):
     du = DataUnderstanding()
     print("******************** Start ********************")
     du.data_understanding(file_name)
