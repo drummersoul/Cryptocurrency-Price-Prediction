@@ -15,6 +15,7 @@ from prophet.plot import (plot_plotly,
                             plot_components_plotly,
                             plot_forecast_component)
 from prophet.plot import plot_forecast_component
+from sklearn.neighbors import KNeighborsClassifier
 warnings.filterwarnings('ignore')
 
 class DataUnderstanding:
@@ -40,6 +41,21 @@ class DataUnderstanding:
         # Conver date object type to date type
         df['date'] = pd.to_datetime(df['date'])
 
+        #Created a new dataframe to store newly create date column
+        new_df=pd.DataFrame()
+        new_df['m_date']=df['date']
+        
+        #In this section we will check for the number of missing dates
+        new_df =new_df.set_index('m_date')
+        
+        #Create a full date range from the start to the end of your dataset
+        date_range=pd.date_range(start=new_df.index.min(),end=new_df.index.max())
+        
+        #Identify missing dates by finding those which are not in your Datafreme's index
+        missing_dates=date_range.difference(new_df.index)
+        print(f'Missing Date:{missing_dates}')
+        print(f'Missing Date Size{missing_dates.size}')
+    
         #To decide if we want to show plots or not
         show_figure = False
 
@@ -187,3 +203,21 @@ class DataUnderstanding:
         #Area under curve (auc)
         roc_auc_rf = roc_auc_score(y_test_class, rf_y_pred)
         graph.roc_cure_for_one_model(fpr_rf, tpr_rf, roc_auc_rf)
+
+        print()
+        print("KNN Model : ", end="\n\n")
+        # Instantiate KNN model
+        knn_model = KNeighborsClassifier(n_neighbors=5)
+
+        # Train the model
+        knn_model.fit(X_train, y_train_class)
+
+        # Predict classes for test data
+        y_pred_knn = knn_model.predict(X_test)
+
+        # Evaluate model performance
+        train_acc_knn = knn_model.score(X_train, y_train_class)
+        test_acc_knn = knn_model.score(X_test, y_test_class)
+
+        print("KNN - Train Accuracy:", train_acc_knn)
+        print("KNN - Test Accuracy:", test_acc_knn)
