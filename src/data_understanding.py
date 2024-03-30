@@ -56,7 +56,27 @@ class DataUnderstanding:
         missing_dates=date_range.difference(new_df.index)
         print(f'Missing Date:{missing_dates}')
         print(f'Missing Date Size{missing_dates.size}')
-    
+        
+        #On this other section we will use linear interpolation t add the missing dates and values for each column
+        # Set the 'date' column as the index.
+        df.set_index('date', inplace=True)
+        # Sort the Dataframe by the index.
+        df.sort_index(inplace=True)
+        # Create a full range of dates from the minimum to the maximum date.
+        full_range = pd.date_range(start=df.index.min(), end=df.index.max())
+        # Reindex the Dataframe to include all dates in the full range.
+        df = df.reindex(full_range)
+        # Select columns to interpolate.
+        columns_to_interpolate = df.columns.difference([])
+        # Interpolate only the selected columns.
+        df[columns_to_interpolate] = df[columns_to_interpolate].interpolate(method='linear')
+        # Reset the index to turn the 'date' index back into a column.
+        df.reset_index(inplace=True)
+        df.rename(columns={'index': 'date'}, inplace=True)
+        # Fill missing values in 'crypto_name' column with 'Litecoin'.
+        df['crypto_name'] = df['crypto_name'].fillna('Litecoin')
+        df.drop(['timestamp'], axis=1, inplace=True)
+        print(df.isnull().sum())
         #To decide if we want to show plots or not
         show_figure = False
 
@@ -250,3 +270,10 @@ class DataUnderstanding:
 
         print("KNN - Train Accuracy:", train_acc_knn)
         print("KNN - Test Accuracy:", test_acc_knn)
+
+         # Calculate ROC curve and AUC for KNN
+        fpr_knn, tpr_knn, thresholds_knn = roc_curve(y_test_class, y_pred_knn)
+        roc_auc_knn = roc_auc_score(y_test_class, y_pred_knn)
+
+        # Plot ROC curve for KNN
+        graph.roc_cure_for_one_model(fpr_knn, tpr_knn, roc_auc_knn)
