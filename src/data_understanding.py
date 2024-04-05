@@ -340,10 +340,10 @@ class DataUnderstanding:
             kpi1, kpi2 = st.columns(2)
             with kpi1:
                 st.markdown("**Accuracy Testing**")
-                st.markdown(f"<h1 style='text-align: left; color: white;'>{round(rf_train_acc,2)}</h1>", unsafe_allow_html=True)
+                st.markdown(f"<h1 style='text-align: left; color: white;'>{round(rf_test_acc,2)}</h1>", unsafe_allow_html=True)
             with kpi2:
                 st.markdown("**Accuracy Training**")
-                st.markdown(f"<h1 style='text-align: left; color: white;'>{round(rf_test_acc,2)}</h1>", unsafe_allow_html=True)
+                st.markdown(f"<h1 style='text-align: left; color: white;'>{round(rf_train_acc,2)}</h1>", unsafe_allow_html=True)
             # Contenedor para más organización si es necesario
             with st.container():
                 # Pestañas para organizar contenido diferente
