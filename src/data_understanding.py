@@ -255,7 +255,7 @@ class DataUnderstanding:
         
         #Area under curve (auc)
         roc_auc_rf = roc_auc_score(y_test_class, rf_y_pred)
-        graph.roc_cure_for_one_model(fpr_rf, tpr_rf, roc_auc_rf)
+        graph.roc_cure_for_one_model(fpr_rf, tpr_rf, roc_auc_rf, "Random Forest")
 
         print()
         print("KNN Model : ", end="\n\n")
@@ -280,7 +280,7 @@ class DataUnderstanding:
         roc_auc_knn = roc_auc_score(y_test_class, y_pred_knn)
 
         # Plot ROC curve for KNN
-        graph.roc_cure_for_one_model(fpr_knn, tpr_knn, roc_auc_knn)
+        graph.roc_cure_for_one_model(fpr_knn, tpr_knn, roc_auc_knn, "KNN")
 
         #To decide if we want to show plots or not
         show_figure = True   
@@ -358,7 +358,7 @@ class DataUnderstanding:
             with tab4:
                 st.pyplot(model.display_classificiation_metrics(traind_classifer_rf, X_test, y_test_class, "Random Forest"))   
             with tab5:
-                st.pyplot(graph.roc_cure_for_one_model(fpr_rf, tpr_rf, roc_auc_rf)) 
+                st.pyplot(graph.roc_cure_for_one_model(fpr_rf, tpr_rf, roc_auc_rf, "Random Forest")) 
         elif opcion == 'KNN':
             # Show KPI option 2
             kpi1, kpi2 = st.columns(2)
@@ -377,9 +377,6 @@ class DataUnderstanding:
                 st.pyplot(graph.basicPlot(y = df['close'], title='Crypto Close Price', y_label= 'Price in Dollars', show_figure = show_figure))                                    #Dashboard
             with tab2:
                 st.dataframe(df)
-            with tab3:
-                st.pyplot(graph.graphCorrelation(sub_df.iloc[:, 1:], "Correlation HeatMap for Litecoin",show_figure = show_figure))  
-
         elif opcion=="More":
             with st.container():
                 # Pestañas para organizar contenido diferente
