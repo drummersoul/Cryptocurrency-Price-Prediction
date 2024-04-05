@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 from utils.utils import get_data, get_specific_data
 import warnings  # Adding warning ignore to avoid issues with distplot
 import numpy as np
+import streamlit as st
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import roc_curve, roc_auc_score
 from sklearn.model_selection import train_test_split,TimeSeriesSplit,cross_val_score
@@ -18,6 +19,9 @@ from prophet.plot import (plot_plotly,
 from prophet.plot import plot_forecast_component
 from sklearn.neighbors import KNeighborsClassifier
 warnings.filterwarnings('ignore')
+from sklearn.exceptions import ConvergenceWarning
+# This will ignore all convergence warnings
+warnings.filterwarnings("ignore", category=ConvergenceWarning)
 
 class DataUnderstanding:
 
@@ -25,7 +29,7 @@ class DataUnderstanding:
         pass
 
     def data_understanding(self, file_name : str):
-        # Read dataset and display basic information
+        # Read dataset and display basic informations
         df = get_data(file_name)
 
         #instantiating Graph & Model classes
@@ -81,7 +85,7 @@ class DataUnderstanding:
         show_figure = False
 
         # Plot historical close price
-        graph.basicPlot(y = df['close'], title='Crypto Close Price', y_label= 'Price in Dollars', show_figure = show_figure)
+        graph.basicPlot(y = df['close'], title='Crypto Close Price',x_label= "years", y_label= 'Price in Dollars', show_figure = show_figure)
 
         # Define features for future use
         features = ['open', 'high', 'low', 'close']
@@ -102,12 +106,12 @@ class DataUnderstanding:
         df['target'] = np.where(df['close'].shift(-1) > df['close'], 1, 0)
 
         # Print the first few rows of the DataFrame to see the changes
-        print(df.head())
+        # print(df.head())
 
         # Group the DataFrame 'df' by the 'year' column and calculate the mean of each numeric column for each group
         # numeric_only is to calculate mean only for numbers
         data_grouped = df.groupby(by=['year']).mean(numeric_only=True)
-        print(data_grouped)
+        #print(data_grouped)
 
         bar_plot_features = ['open', 'high', 'low', 'close']
         # Plot a bar chart for the current column using the grouped data
@@ -162,19 +166,19 @@ class DataUnderstanding:
         logistic_reg = model.logistic_regression(X_train, X_test, y_train_class, y_test_class)
         tscv = TimeSeriesSplit(n_splits=5)
         logistic_reg_model = LogisticRegression()
-        cv_scores = cross_val_score(logistic_reg_model, X_train, y_train_class, cv=tscv)
-        # Print cross-validation scores
-        print("Cross-validation scores LOG_REG:", cv_scores)
-        # Print mean and standard deviation of cross-validation scores
-        print("Mean CV score LOG_REG:", cv_scores.mean())
-        print("Standard deviation of CV scores LOG_REG:", cv_scores.std())
+        # cv_scores = cross_val_score(logistic_reg_model, X_train, y_train_class, cv=tscv)
+        # # Print cross-validation scores
+        # print("Cross-validation scores LOG_REG:", cv_scores)
+        # # Print mean and standard deviation of cross-validation scores
+        # print("Mean CV score LOG_REG:", cv_scores.mean())
+        # print("Standard deviation of CV scores LOG_REG:", cv_scores.std())
 
         train_acc, test_acc, y_pred_proba_logistic = logistic_reg
         print(f'Accuracy of Training: {train_acc}')
         print(f'Accuracy of Testing: {test_acc}')
 
-        model.xgb_gcv(X_train, X_test, y_train_class, y_test_class)
-        model.logr_gcv(X_train, X_test, y_train_class, y_test_class)
+        # model.xgb_gcv(X_train, X_test, y_train_class, y_test_class)
+        # model.logr_gcv(X_train, X_test, y_train_class, y_test_class)
 
         #use XGBClassifier to tain a model and predict classes
 
@@ -186,12 +190,12 @@ class DataUnderstanding:
         train_acc_xgb, test_acc_xgb, y_pred_proba_xgb = xgbclassifier
         tscv = TimeSeriesSplit(n_splits=5)
         xgb_cv_model = XGBClassifier()
-        cv_scores_xgb = cross_val_score(xgb_cv_model, X_train, y_train_class, cv=tscv)
-        # Print cross-validation scores
-        print("Cross-validation scores XGB:", cv_scores_xgb)
-        # Print mean and standard deviation of cross-validation scores
-        print("Mean CV score XGB:", cv_scores_xgb.mean())
-        print("Standard deviation of CV scores XGB:", cv_scores_xgb.std())
+        # cv_scores_xgb = cross_val_score(xgb_cv_model, X_train, y_train_class, cv=tscv)
+        # # Print cross-validation scores
+        # print("Cross-validation scores XGB:", cv_scores_xgb)
+        # # Print mean and standard deviation of cross-validation scores
+        # print("Mean CV score XGB:", cv_scores_xgb.mean())
+        # print("Standard deviation of CV scores XGB:", cv_scores_xgb.std())
         print("Evaluation results for XGBClassifier:")
         print(f"training set accuracy: {train_acc_xgb}")
         print(f"test set accuracy: {test_acc_xgb}")
@@ -277,3 +281,11 @@ class DataUnderstanding:
 
         # Plot ROC curve for KNN
         graph.roc_cure_for_one_model(fpr_knn, tpr_knn, roc_auc_knn)
+
+        #To decide if we want to show plots or not
+        show_figure = True   
+        st.set_page_config(
+            page_title="Crypto Prediciton Dashboard",
+            page_icon="💸",
+            layout="centered",
+            initial_sidebar_state="expanded")
