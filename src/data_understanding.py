@@ -292,7 +292,7 @@ class DataUnderstanding:
         
         opcion = st.sidebar.selectbox(
                 'Select a model',
-                ('Logistic Regression', 'XGBClassifier')  # available options
+                ('Logistic Regression', 'XGBClassifier','More')  # available options
                 )
 
         # Content based on option selected by user
@@ -301,16 +301,48 @@ class DataUnderstanding:
             kpi1, kpi2 = st.columns(2)
             with kpi1:
                 st.markdown("**Accuracy Testing**")
-                st.markdown(f"<h1 style='text-align: left; color: black;'>{round(train_acc_logistic,2)}</h1>", unsafe_allow_html=True)
+                st.markdown(f"<h1 style='text-align: left; color: white;'>{round(train_acc_logistic,2)}</h1>", unsafe_allow_html=True)
             with kpi2:
                 st.markdown("**Accuracy Training**")
-                st.markdown(f"<h1 style='text-align: left; color: black;'>{round(test_acc_logistic,2)}</h1>", unsafe_allow_html=True)
+                st.markdown(f"<h1 style='text-align: left; color: white;'>{round(test_acc_logistic,2)}</h1>", unsafe_allow_html=True)
+            with st.container():
+                # Pestañas para organizar contenido diferente
+                tab1, tab2, tab3 = st.tabs(["Historical_Data", "Dataset","Heatmap"])
+            with tab1:
+                st.set_option('deprecation.showPyplotGlobalUse', False)   #Dashboard
+                st.pyplot(graph.basicPlot(y = df['close'], title='Crypto Close Price', y_label= 'Price in Dollars', show_figure = show_figure))                                    #Dashboard
+            with tab2:
+                st.dataframe(df)                                  #Dashboard
+            with tab3:
+                st.pyplot(graph.graphCorrelation(sub_df.iloc[:, 1:], "Correlation HeatMap for Litecoin",show_figure = show_figure))
         elif opcion == 'XGBClassifier':
             # Show KPI option 2
             kpi1, kpi2 = st.columns(2)
             with kpi1:
                 st.markdown("**Accuracy Testing**")
-                st.markdown(f"<h1 style='text-align: left; color: black;'>{round(train_acc_xgb,2)}</h1>", unsafe_allow_html=True)
+                st.markdown(f"<h1 style='text-align: left; color: white;'>{round(train_acc_xgb,2)}</h1>", unsafe_allow_html=True)
             with kpi2:
                 st.markdown("**Accuracy Training**")
-                st.markdown(f"<h1 style='text-align: left; color: black;'>{round(test_acc_xgb,2)}</h1>", unsafe_allow_html=True)
+                st.markdown(f"<h1 style='text-align: left; color: white;'>{round(test_acc_xgb,2)}</h1>", unsafe_allow_html=True)
+            # Contenedor para más organización si es necesario
+            with st.container():
+                # Pestañas para organizar contenido diferente
+                tab1, tab2, tab3 = st.tabs(["Historical_Data", "Dataset","Heatmap"])
+            with tab1:
+                st.set_option('deprecation.showPyplotGlobalUse', False)   #Dashboard
+                st.pyplot(graph.basicPlot(y = df['close'], title='Crypto Close Price', y_label= 'Price in Dollars', show_figure = show_figure))                                    #Dashboard
+            with tab2:
+                st.dataframe(df)                                  #Dashboard
+            with tab3:
+                st.pyplot(graph.graphCorrelation(sub_df.iloc[:, 1:], "Correlation HeatMap for Litecoin",show_figure = show_figure))      
+        elif opcion=="More":
+            with st.container():
+                # Pestañas para organizar contenido diferente
+                tab1, tab2, tab3 = st.tabs(["Historical_Data", "Dataset","Heatmap"])
+            with tab1:
+                st.set_option('deprecation.showPyplotGlobalUse', False)   #Dashboard
+                st.pyplot(graph.basicPlot(y = df['close'], title='Crypto Close Price', y_label= 'Price in Dollars', show_figure = show_figure))                                    #Dashboard
+            with tab2:
+                st.dataframe(df)                                  #Dashboard
+            with tab3:
+                st.pyplot(graph.graphCorrelation(sub_df.iloc[:, 1:], "Correlation HeatMap for Litecoin",show_figure = show_figure))          
