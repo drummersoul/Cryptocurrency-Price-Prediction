@@ -9,6 +9,7 @@ from yellowbrick.classifier import ClassPredictionError
 import matplotlib.pyplot as plt
 from sklearn.model_selection import cross_val_score, GridSearchCV
 from sklearn.ensemble import RandomForestClassifier
+from sklearn.neighbors import KNeighborsClassifier
 
 class Models:
 
@@ -156,7 +157,7 @@ class Models:
         #display confusion matrix
         self.display_classificiation_metrics(rf, x_test, y_test, model_name)
 
-        return train_acc, test_acc, rf_y_pred
+        return train_acc, test_acc, rf_y_pred, rf
 
     def logr_gcv(self, x_train: pd.DataFrame, x_test: pd.DataFrame, y_train: pd.Series, y_test: pd.Series):
 
