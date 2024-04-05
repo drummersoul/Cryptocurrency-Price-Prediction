@@ -3,8 +3,8 @@ import math as math
 from sklearn.linear_model import LinearRegression, LogisticRegression #, SGDRegressor, Lasso, LassoCV, Ridge, RidgeCV, ElasticNet, ElasticNetCV
 from sklearn.metrics import accuracy_score, mean_squared_error, r2_score
 from xgboost import XGBClassifier
-from sklearn.metrics import classification_report
 from sklearn.metrics import ConfusionMatrixDisplay, accuracy_score, precision_score, recall_score, f1_score, roc_auc_score
+from sklearn.metrics import precision_recall_fscore_support
 from yellowbrick.classifier import ClassPredictionError
 import matplotlib.pyplot as plt
 from sklearn.model_selection import cross_val_score, GridSearchCV
@@ -94,8 +94,11 @@ class Models:
         plt.title(f'confusion matrix for {model_name} test data')
         plt.show()
         #print precision, recall, f1_score with respect to class with label 1 and accuracy
-        print("classification report for test data:\n")
-        print(classification_report(y_test, y_test_predicted))
+        precision, recall, f1_score, support = precision_recall_fscore_support(y_test, y_test_predicted, average='binary')
+        print(f"classification metrics for {model_name} for test data:")
+        print(f"precision: {precision}")
+        print(f"recall: {recall}")
+        print(f"f1_score: {f1_score}\n")
 
     def class_prediction_error(self, x_train: pd.DataFrame, y_train: pd.DataFrame, x_test: pd.DataFrame, y_test: pd.DataFrame, model, model_name: str):
         visualizer = ClassPredictionError(model,  classes=['low', 'high'])

@@ -170,9 +170,9 @@ class DataUnderstanding:
         print("Mean CV score LOG_REG:", cv_scores.mean())
         print("Standard deviation of CV scores LOG_REG:", cv_scores.std())
 
-        train_acc, test_acc, y_pred_proba_logistic = logistic_reg
-        print(f'Accuracy of Training: {train_acc}')
-        print(f'Accuracy of Testing: {test_acc}')
+        train_acc_logistic, test_acc_logistic, y_pred_proba_logistic = logistic_reg
+        print(f'Accuracy of Training: {train_acc_logistic}')
+        print(f'Accuracy of Testing: {test_acc_logistic}')
 
         model.xgb_gcv(X_train, X_test, y_train_class, y_test_class)
         model.logr_gcv(X_train, X_test, y_train_class, y_test_class)
@@ -286,3 +286,28 @@ class DataUnderstanding:
             page_icon="💸",
             layout="centered",
             initial_sidebar_state="expanded")
+        
+        opcion = st.sidebar.selectbox(
+                'Select a model',
+                ('Logistic Regression', 'XGBClassifier')  # available options
+                )
+
+        # Content based on option selected by user
+        if opcion == 'Logistic Regression':
+            # KPIS for option 1
+            kpi1, kpi2 = st.columns(2)
+            with kpi1:
+                st.markdown("**Accuracy Testing**")
+                st.markdown(f"<h1 style='text-align: left; color: black;'>{round(train_acc_logistic,2)}</h1>", unsafe_allow_html=True)
+            with kpi2:
+                st.markdown("**Accuracy Training**")
+                st.markdown(f"<h1 style='text-align: left; color: black;'>{round(test_acc_logistic,2)}</h1>", unsafe_allow_html=True)
+        elif opcion == 'XGBClassifier':
+            # Show KPI option 2
+            kpi1, kpi2 = st.columns(2)
+            with kpi1:
+                st.markdown("**Accuracy Testing**")
+                st.markdown(f"<h1 style='text-align: left; color: black;'>{round(train_acc_xgb,2)}</h1>", unsafe_allow_html=True)
+            with kpi2:
+                st.markdown("**Accuracy Training**")
+                st.markdown(f"<h1 style='text-align: left; color: black;'>{round(test_acc_xgb,2)}</h1>", unsafe_allow_html=True)
