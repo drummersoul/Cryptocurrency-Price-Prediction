@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 from utils.utils import get_data, get_specific_data
 import warnings  # Adding warning ignore to avoid issues with distplot
 import numpy as np
+import streamlit as st
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import roc_curve, roc_auc_score
 from sklearn.model_selection import train_test_split,TimeSeriesSplit,cross_val_score
@@ -277,3 +278,11 @@ class DataUnderstanding:
 
         # Plot ROC curve for KNN
         graph.roc_cure_for_one_model(fpr_knn, tpr_knn, roc_auc_knn)
+
+        #To decide if we want to show plots or not
+        show_figure = True   
+        st.set_page_config(
+            page_title="Crypto Prediciton Dashboard",
+            page_icon="💸",
+            layout="centered",
+            initial_sidebar_state="expanded")
