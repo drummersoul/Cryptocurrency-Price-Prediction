@@ -246,16 +246,16 @@ class DataUnderstanding:
         graph.roc_cure(fpr_logistic, tpr_logistic,roc_auc_logistic, fpr_xgb, tpr_xgb, roc_auc_xgb,show_figure = show_figure)
 
         #Random Forest Algorithem
-        train_acc, test_acc, rf_y_pred = model.random_forest(X_train, X_test, y_train_class, y_test_class)
-        print(" Random Forest -- Train Accuracy ==>> ", train_acc)
-        print(" Random Forest -- Test Accuracy ==>> ", test_acc)
+        rf_train_acc, rf_test_acc, rf_y_pred, traind_classifer_rf = model.random_forest(X_train, X_test, y_train_class, y_test_class)
+        print(" Random Forest -- Train Accuracy ==>> ", rf_train_acc)
+        print(" Random Forest -- Test Accuracy ==>> ", rf_test_acc)
 
         #ploting Roc-curve for Random Forest
         fpr_rf, tpr_rf, threshold_rf = roc_curve(y_test_class, rf_y_pred)
         
         #Area under curve (auc)
         roc_auc_rf = roc_auc_score(y_test_class, rf_y_pred)
-        graph.roc_cure_for_one_model(fpr_rf, tpr_rf, roc_auc_rf)
+        graph.roc_cure_for_one_model(fpr_rf, tpr_rf, roc_auc_rf, "Random Forest")
 
         print()
         print("KNN Model : ", end="\n\n")
@@ -280,7 +280,7 @@ class DataUnderstanding:
         roc_auc_knn = roc_auc_score(y_test_class, y_pred_knn)
 
         # Plot ROC curve for KNN
-        graph.roc_cure_for_one_model(fpr_knn, tpr_knn, roc_auc_knn)
+        graph.roc_cure_for_one_model(fpr_knn, tpr_knn, roc_auc_knn, "KNN")
 
         #To decide if we want to show plots or not
         show_figure = True   
@@ -292,7 +292,7 @@ class DataUnderstanding:
         
         opcion = st.sidebar.selectbox(
                 'Select a model',
-                ('Logistic Regression', 'XGBClassifier','More')  # available options
+                ('Logistic Regression', 'XGBClassifier','Random Forest', "KNN", "More")  # available options
                 )
 
         # Content based on option selected by user
@@ -335,6 +335,48 @@ class DataUnderstanding:
                 st.dataframe(df)                                  #Dashboard
             with tab3:
                 st.pyplot(graph.graphCorrelation(sub_df.iloc[:, 1:], "Correlation HeatMap for Litecoin",show_figure = show_figure))      
+        elif opcion == 'Random Forest':
+            # Show KPI option 2
+            kpi1, kpi2 = st.columns(2)
+            with kpi1:
+                st.markdown("**Accuracy Testing**")
+                st.markdown(f"<h1 style='text-align: left; color: white;'>{round(rf_train_acc,2)}</h1>", unsafe_allow_html=True)
+            with kpi2:
+                st.markdown("**Accuracy Training**")
+                st.markdown(f"<h1 style='text-align: left; color: white;'>{round(rf_test_acc,2)}</h1>", unsafe_allow_html=True)
+            # Contenedor para más organización si es necesario
+            with st.container():
+                # Pestañas para organizar contenido diferente
+                tab1, tab2, tab3, tab4, tab5 = st.tabs(["Historical_Data", "Dataset","Heatmap", "Confusion Matrix", "Roc Curve"])
+            with tab1:
+                st.set_option('deprecation.showPyplotGlobalUse', False)   #Dashboard
+                st.pyplot(graph.basicPlot(y = df['close'], title='Crypto Close Price', y_label= 'Price in Dollars', show_figure = show_figure))                                    #Dashboard
+            with tab2:
+                st.dataframe(df)
+            with tab3:
+                st.pyplot(graph.graphCorrelation(sub_df.iloc[:, 1:], "Correlation HeatMap for Litecoin",show_figure = show_figure))  
+            with tab4:
+                st.pyplot(model.display_classificiation_metrics(traind_classifer_rf, X_test, y_test_class, "Random Forest"))   
+            with tab5:
+                st.pyplot(graph.roc_cure_for_one_model(fpr_rf, tpr_rf, roc_auc_rf, "Random Forest")) 
+        elif opcion == 'KNN':
+            # Show KPI option 2
+            kpi1, kpi2 = st.columns(2)
+            with kpi1:
+                st.markdown("**Accuracy Testing**")
+                st.markdown(f"<h1 style='text-align: left; color: white;'>{round(rf_train_acc,2)}</h1>", unsafe_allow_html=True)
+            with kpi2:
+                st.markdown("**Accuracy Training**")
+                st.markdown(f"<h1 style='text-align: left; color: white;'>{round(rf_test_acc,2)}</h1>", unsafe_allow_html=True)
+            # Contenedor para más organización si es necesario
+            with st.container():
+                # Pestañas para organizar contenido diferente
+                tab1, tab2, tab3, tab4, tab5 = st.tabs(["Historical_Data", "Dataset","Heatmap", "Confusion Matrix", "Roc Curve"])
+            with tab1:
+                st.set_option('deprecation.showPyplotGlobalUse', False)   #Dashboard
+                st.pyplot(graph.basicPlot(y = df['close'], title='Crypto Close Price', y_label= 'Price in Dollars', show_figure = show_figure))                                    #Dashboard
+            with tab2:
+                st.dataframe(df)
         elif opcion=="More":
             with st.container():
                 # Pestañas para organizar contenido diferente
@@ -345,4 +387,4 @@ class DataUnderstanding:
             with tab2:
                 st.dataframe(df)                                  #Dashboard
             with tab3:
-                st.pyplot(graph.graphCorrelation(sub_df.iloc[:, 1:], "Correlation HeatMap for Litecoin",show_figure = show_figure))          
+                st.pyplot(graph.graphCorrelation(sub_df.iloc[:, 1:], "Correlation HeatMap for Litecoin",show_figure = show_figure))   

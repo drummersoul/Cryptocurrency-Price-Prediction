@@ -208,11 +208,11 @@ class Graphs:
         plt.show()
 
     def roc_cure_for_one_model(self, fpr : np.ndarray, tpr : np.ndarray, auc : float,
-                                show_figure : bool = True):
+                                model_name : str,show_figure : bool = True):
         if(not show_figure):
             return
         plt.figure(figsize=(8, 6))
-        plt.plot(fpr, tpr, label=f'Logistic Regression (AUC = {auc:.2f})')
+        plt.plot(fpr, tpr, label=f'{model_name} (AUC = {auc:.2f})')
         plt.plot([0, 1], 'k--')
         plt.xlabel('False Positive Rate')
         plt.ylabel('True Positive Rate')
