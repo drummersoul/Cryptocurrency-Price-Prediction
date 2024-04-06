@@ -104,6 +104,8 @@ class DataUnderstanding:
         df['MA30'] = df['close'].rolling(window=30).mean()
         df['Price_Change'] = df['close'].diff()
         df['target'] = np.where(df['close'].shift(-1) > df['close'], 1, 0)
+        df['PriceDifference'] = df['open'] - df['close']
+        df['UpDown'] = np.where(df['PriceDifference'] > 0, 0, 1)
 
         # Print the first few rows of the DataFrame to see the changes
         # print(df.head())
@@ -134,7 +136,7 @@ class DataUnderstanding:
         
         #feature and target variables for classification
         X = df[['open', 'high', 'low', 'marketCap', 'year', 'month', 'day']]
-        y = df['close']
+        y = df['UpDown']
 
         scaler = StandardScaler()
         X = scaler.fit_transform(X)
@@ -155,8 +157,10 @@ class DataUnderstanding:
         print(f"y_train: {y_train.shape}")
         print(f"y_test: {y_test.shape}")
 
-        y_train_class = (y_train.shift(-1) > y_train).astype(int)
-        y_test_class = (y_test.shift(-1) > y_test).astype(int)
+        # y_train_class = (y_train.shift(-1) > y_train).astype(int)
+        # y_test_class = (y_test.shift(-1) > y_test).astype(int)
+        y_train_class = y_train
+        y_test_class = y_test
 
         #testing for class counts
         print("class counts of train_data:")
@@ -293,6 +297,8 @@ class DataUnderstanding:
             page_icon="💸",
             layout="centered",
             initial_sidebar_state="expanded")
+        # Title
+        st.title("Litecoin Price Prediction Dashboard")
         
         opcion = st.sidebar.selectbox(
                 'Select a model',
