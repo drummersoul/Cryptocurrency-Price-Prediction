@@ -293,6 +293,8 @@ class DataUnderstanding:
             page_icon="💸",
             layout="centered",
             initial_sidebar_state="expanded")
+        # Title
+        st.title("Litecoin Price Prediction Dashboard")
         
         opcion = st.sidebar.selectbox(
                 'Select a model',
