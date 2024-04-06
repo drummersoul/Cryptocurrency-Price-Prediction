@@ -99,6 +99,7 @@ class Models:
         print(f"precision: {precision}")
         print(f"recall: {recall}")
         print(f"f1_score: {f1_score}\n")
+        return recall,precision
 
     def class_prediction_error(self, x_train: pd.DataFrame, y_train: pd.DataFrame, x_test: pd.DataFrame, y_test: pd.DataFrame, model, model_name: str):
         visualizer = ClassPredictionError(model,  classes=['low', 'high'])

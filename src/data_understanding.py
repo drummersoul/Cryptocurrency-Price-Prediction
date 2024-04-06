@@ -280,7 +280,15 @@ class DataUnderstanding:
         roc_auc_knn = roc_auc_score(y_test_class, y_pred_knn)
 
         # Plot ROC curve for KNN
+<<<<<<< Updated upstream
         graph.roc_cure_for_one_model(fpr_knn, tpr_knn, roc_auc_knn)
+=======
+        graph.roc_cure_for_one_model(fpr_knn, tpr_knn, roc_auc_knn, "KNN")
+        knn_recall,knn_precison=model.display_classificiation_metrics(knn_model,X_test,y_test_class,model_name="knn")
+        # xgb_recall,xgb_precison=model.display_classificiation_metrics(xgbclassifier,X_test,y_test,model_name="XGB Classifier")
+        rf_recall,rf_precison=model.display_classificiation_metrics(traind_classifer_rf, X_test, y_test_class, "Random Forest")
+        # logistic_recall,logistic_precison=model.display_classificiation_metrics(logistic_reg,X_test,y_test,model_name="logistic_reg")
+>>>>>>> Stashed changes
 
         #To decide if we want to show plots or not
         show_figure = True   
@@ -334,7 +342,58 @@ class DataUnderstanding:
             with tab2:
                 st.dataframe(df)                                  #Dashboard
             with tab3:
+<<<<<<< Updated upstream
                 st.pyplot(graph.graphCorrelation(sub_df.iloc[:, 1:], "Correlation HeatMap for Litecoin",show_figure = show_figure))      
+=======
+                st.pyplot(graph.graphCorrelation(sub_df.iloc[:, 1:], "Correlation HeatMap for Litecoin",show_figure = show_figure)) 
+            with tab4:
+                st.pyplot(model.display_classificiation_metrics(trained_xgb_classifier, X_test, y_test_class, "XGBClassifier"))   
+            with tab5:
+                st.pyplot(graph.roc_cure_for_one_model(fpr_xgb, tpr_xgb, roc_auc_xgb, "XGBClassifier"))      
+        elif opcion == 'Random Forest':
+            # Show KPI option 2 
+            display_kpis(rf_train_acc, rf_test_acc, "Random Forest")
+            kpi3,kpi4=st.columns(2)
+            with kpi3:
+                st.markdown("**Recall**")
+                st.markdown(f"<h1 style='text-align: left; color: white;'>{round(rf_recall,2)}</h1>", unsafe_allow_html=True)
+            with kpi4:
+                st.markdown("**Precision**")
+                st.markdown(f"<h1 style='text-align: left; color: white;'>{round(rf_precison,2)}</h1>", unsafe_allow_html=True)
+            with st.container():
+                # Pestañas para organizar contenido diferente
+                tab1, tab2, tab3, tab4, tab5 = setup_tabs()
+            with tab1:
+                st.set_option('deprecation.showPyplotGlobalUse', False)   #Dashboard
+                st.pyplot(graph.basicPlot(y = df['close'], title='Crypto Close Price', y_label= 'Price in Dollars', show_figure = show_figure))                                    #Dashboard
+            with tab2:
+                st.dataframe(df)
+            with tab3:
+                st.pyplot(graph.graphCorrelation(sub_df.iloc[:, 1:], "Correlation HeatMap for Litecoin",show_figure = show_figure))  
+            with tab4:
+                st.pyplot(model.display_classificiation_metrics(traind_classifer_rf, X_test, y_test_class, "Random Forest"))   
+            with tab5:
+                st.pyplot(graph.roc_cure_for_one_model(fpr_rf, tpr_rf, roc_auc_rf, "Random Forest")) 
+        elif opcion == 'KNN':
+            # Show KPI option 2
+            display_kpis(train_acc_knn, test_acc_knn, "KNN")
+            kpi3,kpi4=st.columns(2)
+            with kpi3:
+                st.markdown("**KNN Recall**")
+                st.markdown(f"<h1 style='text-align: left; color: white;'>{round(knn_recall,2)}</h1>", unsafe_allow_html=True)
+            with kpi4:
+                st.markdown("**KNN Precision**")
+                st.markdown(f"<h1 style='text-align: left; color: white;'>{round(knn_precison,2)}</h1>", unsafe_allow_html=True)
+
+            with st.container():
+                # Pestañas para organizar contenido diferente
+                tab1, tab2, tab3, tab4, tab5 = setup_tabs()
+            with tab1:
+                st.set_option('deprecation.showPyplotGlobalUse', False)   #Dashboard
+                st.pyplot(graph.basicPlot(y = df['close'], title='Crypto Close Price', y_label= 'Price in Dollars', show_figure = show_figure))                                    #Dashboard
+            with tab2:
+                st.dataframe(df)
+>>>>>>> Stashed changes
         elif opcion=="More":
             with st.container():
                 # Pestañas para organizar contenido diferente
