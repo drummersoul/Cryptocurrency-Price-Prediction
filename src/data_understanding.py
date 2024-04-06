@@ -173,7 +173,7 @@ class DataUnderstanding:
         # print("Mean CV score LOG_REG:", cv_scores.mean())
         # print("Standard deviation of CV scores LOG_REG:", cv_scores.std())
 
-        train_acc_logistic, test_acc_logistic, y_pred_proba_logistic = logistic_reg
+        train_acc_logistic, test_acc_logistic, y_pred_proba_logistic, trained_logistic_reg = logistic_reg
         print(f'Accuracy of Training: {train_acc_logistic}')
         print(f'Accuracy of Testing: {test_acc_logistic}')
 
@@ -187,7 +187,7 @@ class DataUnderstanding:
         learning_rate = 0.01
         max_depth = 3
         xgbclassifier = model.xgbclassifier(reg_lambda, reg_alpha, learning_rate, max_depth, X_train, X_test, y_train_class, y_test_class)
-        train_acc_xgb, test_acc_xgb, y_pred_proba_xgb = xgbclassifier
+        train_acc_xgb, test_acc_xgb, y_pred_proba_xgb, trained_xgb_classifier= xgbclassifier
         tscv = TimeSeriesSplit(n_splits=5)
         xgb_cv_model = XGBClassifier()
         # cv_scores_xgb = cross_val_score(xgb_cv_model, X_train, y_train_class, cv=tscv)
@@ -292,7 +292,7 @@ class DataUnderstanding:
         
         opcion = st.sidebar.selectbox(
                 'Select a model',
-                ('Logistic Regression', 'XGBClassifier','Random Forest', "KNN", "More")  # available options
+                ('Logistic Regression', 'XGB Classifier','Random Forest', "KNN", "More")  # available options
                 )
 
         # Content based on option selected by user
@@ -307,7 +307,7 @@ class DataUnderstanding:
                 st.markdown(f"<h1 style='text-align: left; color: white;'>{round(test_acc_logistic,2)}</h1>", unsafe_allow_html=True)
             with st.container():
                 # Pestañas para organizar contenido diferente
-                tab1, tab2, tab3 = st.tabs(["Historical_Data", "Dataset","Heatmap"])
+                tab1, tab2, tab3, tab4, tab5 = st.tabs(["Historical_Data", "Dataset","Heatmap", "Confusion Matrix", "ROC Curve"])
             with tab1:
                 st.set_option('deprecation.showPyplotGlobalUse', False)   #Dashboard
                 st.pyplot(graph.basicPlot(y = df['close'], title='Crypto Close Price', y_label= 'Price in Dollars', show_figure = show_figure))                                    #Dashboard
@@ -315,6 +315,10 @@ class DataUnderstanding:
                 st.dataframe(df)                                  #Dashboard
             with tab3:
                 st.pyplot(graph.graphCorrelation(sub_df.iloc[:, 1:], "Correlation HeatMap for Litecoin",show_figure = show_figure))
+            with tab4:
+                st.pyplot(model.display_classificiation_metrics(trained_logistic_reg, X_test, y_test_class, "Logistic Regression"))   
+            with tab5:
+                st.pyplot(graph.roc_cure_for_one_model(fpr_logistic, tpr_logistic, roc_auc_logistic, "Logistic Regression")) 
         elif opcion == 'XGBClassifier':
             # Show KPI option 2
             kpi1, kpi2 = st.columns(2)
@@ -327,14 +331,18 @@ class DataUnderstanding:
             # Contenedor para más organización si es necesario
             with st.container():
                 # Pestañas para organizar contenido diferente
-                tab1, tab2, tab3 = st.tabs(["Historical_Data", "Dataset","Heatmap"])
+                tab1, tab2, tab3, tab4, tab5 = st.tabs(["Historical_Data", "Dataset","Heatmap", "Confusion Matrix", "ROC Curve"])
             with tab1:
                 st.set_option('deprecation.showPyplotGlobalUse', False)   #Dashboard
                 st.pyplot(graph.basicPlot(y = df['close'], title='Crypto Close Price', y_label= 'Price in Dollars', show_figure = show_figure))                                    #Dashboard
             with tab2:
                 st.dataframe(df)                                  #Dashboard
             with tab3:
-                st.pyplot(graph.graphCorrelation(sub_df.iloc[:, 1:], "Correlation HeatMap for Litecoin",show_figure = show_figure))      
+                st.pyplot(graph.graphCorrelation(sub_df.iloc[:, 1:], "Correlation HeatMap for Litecoin",show_figure = show_figure)) 
+            with tab4:
+                st.pyplot(model.display_classificiation_metrics(trained_xgb_classifier, X_test, y_test_class, "XGBClassifier"))   
+            with tab5:
+                st.pyplot(graph.roc_cure_for_one_model(fpr_xgb, tpr_xgb, roc_auc_xgb, "XGBClassifier"))      
         elif opcion == 'Random Forest':
             # Show KPI option 2
             kpi1, kpi2 = st.columns(2)
