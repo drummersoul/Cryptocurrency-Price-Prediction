@@ -285,7 +285,11 @@ class DataUnderstanding:
 
         # Plot ROC curve for KNN
         graph.roc_cure_for_one_model(fpr_knn, tpr_knn, roc_auc_knn, "KNN")
-
+        logistic_recall,logistic_precison=model.display_classificiation_metrics(trained_logistic_reg, X_test, y_test_class, model_name="Logistic Regression")
+        xgbclassifier_recall, xgbclassifier_precison=model.display_classificiation_metrics(trained_xgb_classifier, X_test, y_test_class, model_name="XGB Classifier")
+        
+        knn_recall,knn_precison=model.display_classificiation_metrics(knn_model,X_test,y_test_class,model_name="knn")
+        rf_recall,rf_precison=model.display_classificiation_metrics(traind_classifer_rf, X_test, y_test_class, "Random Forest")
         #To decide if we want to show plots or not
         show_figure = True   
         st.set_page_config(
@@ -303,7 +307,7 @@ class DataUnderstanding:
 
         # Content based on option selected by user
         if opcion == 'Logistic Regression':
-            display_kpis(train_acc_logistic, test_acc_logistic, "Logistic Regression")
+            display_kpis(train_acc_logistic, test_acc_logistic, logistic_recall, logistic_precison, "Logistic Regression")
             with st.container():
                 # Pestañas para organizar contenido diferente
                 tab1, tab2, tab3, tab4, tab5 = setup_tabs()
@@ -320,7 +324,7 @@ class DataUnderstanding:
                 st.pyplot(graph.roc_cure_for_one_model(fpr_logistic, tpr_logistic, roc_auc_logistic, "Logistic Regression")) 
         elif opcion == 'XGB Classifier':
             # Show KPI option 2
-            display_kpis(train_acc_xgb, test_acc_xgb, "XGB Classifier")
+            display_kpis(train_acc_xgb, test_acc_xgb, xgbclassifier_recall, xgbclassifier_precison, "XGB Classifier")
             # Contenedor para más organización si es necesario
             with st.container():
                 # Pestañas para organizar contenido diferente
@@ -338,7 +342,7 @@ class DataUnderstanding:
                 st.pyplot(graph.roc_cure_for_one_model(fpr_xgb, tpr_xgb, roc_auc_xgb, "XGBClassifier"))      
         elif opcion == 'Random Forest':
             # Show KPI option 2
-            display_kpis(rf_train_acc, rf_test_acc, "Random Forest")
+            display_kpis(rf_train_acc, rf_test_acc,rf_recall,rf_precison, "Random Forest")
             # Contenedor para más organización si es necesario
             with st.container():
                 # Pestañas para organizar contenido diferente
@@ -356,10 +360,10 @@ class DataUnderstanding:
                 st.pyplot(graph.roc_cure_for_one_model(fpr_rf, tpr_rf, roc_auc_rf, "Random Forest")) 
         elif opcion == 'KNN':
             # Show KPI option 2
-            display_kpis(train_acc_knn, test_acc_knn, "KNN")
+            display_kpis(train_acc_knn, test_acc_knn,knn_recall,knn_precison,"KNN")
             # Contenedor para más organización si es necesario
             with st.container():
-                # Pestañas para organizar contenido diferente
+                # Pestañas para organizar contenido diferente   
                 tab1, tab2, tab3, tab4, tab5 = setup_tabs()
             with tab1:
                 st.set_option('deprecation.showPyplotGlobalUse', False)   #Dashboard
