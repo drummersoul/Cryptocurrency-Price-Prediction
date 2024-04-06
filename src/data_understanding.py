@@ -1,6 +1,6 @@
 import pandas as pd
 import matplotlib.pyplot as plt
-from utils.utils import get_data, get_specific_data
+from utils.utils import get_data, get_specific_data, display_kpis, setup_tabs
 import warnings  # Adding warning ignore to avoid issues with distplot
 import numpy as np
 import streamlit as st
@@ -297,17 +297,10 @@ class DataUnderstanding:
 
         # Content based on option selected by user
         if opcion == 'Logistic Regression':
-            # KPIS for option 1
-            kpi1, kpi2 = st.columns(2)
-            with kpi1:
-                st.markdown("**Accuracy Testing**")
-                st.markdown(f"<h1 style='text-align: left; color: white;'>{round(train_acc_logistic,2)}</h1>", unsafe_allow_html=True)
-            with kpi2:
-                st.markdown("**Accuracy Training**")
-                st.markdown(f"<h1 style='text-align: left; color: white;'>{round(test_acc_logistic,2)}</h1>", unsafe_allow_html=True)
+            display_kpis(train_acc_logistic, test_acc_logistic, "Logistic Regression")
             with st.container():
                 # Pestañas para organizar contenido diferente
-                tab1, tab2, tab3, tab4, tab5 = st.tabs(["Historical_Data", "Dataset","Heatmap", "Confusion Matrix", "ROC Curve"])
+                tab1, tab2, tab3, tab4, tab5 = setup_tabs()
             with tab1:
                 st.set_option('deprecation.showPyplotGlobalUse', False)   #Dashboard
                 st.pyplot(graph.basicPlot(y = df['close'], title='Crypto Close Price', y_label= 'Price in Dollars', show_figure = show_figure))                                    #Dashboard
@@ -319,19 +312,13 @@ class DataUnderstanding:
                 st.pyplot(model.display_classificiation_metrics(trained_logistic_reg, X_test, y_test_class, "Logistic Regression"))   
             with tab5:
                 st.pyplot(graph.roc_cure_for_one_model(fpr_logistic, tpr_logistic, roc_auc_logistic, "Logistic Regression")) 
-        elif opcion == 'XGBClassifier':
+        elif opcion == 'XGB Classifier':
             # Show KPI option 2
-            kpi1, kpi2 = st.columns(2)
-            with kpi1:
-                st.markdown("**Accuracy Testing**")
-                st.markdown(f"<h1 style='text-align: left; color: white;'>{round(train_acc_xgb,2)}</h1>", unsafe_allow_html=True)
-            with kpi2:
-                st.markdown("**Accuracy Training**")
-                st.markdown(f"<h1 style='text-align: left; color: white;'>{round(test_acc_xgb,2)}</h1>", unsafe_allow_html=True)
+            display_kpis(train_acc_xgb, test_acc_xgb, "XGB Classifier")
             # Contenedor para más organización si es necesario
             with st.container():
                 # Pestañas para organizar contenido diferente
-                tab1, tab2, tab3, tab4, tab5 = st.tabs(["Historical_Data", "Dataset","Heatmap", "Confusion Matrix", "ROC Curve"])
+                tab1, tab2, tab3, tab4, tab5 = setup_tabs()
             with tab1:
                 st.set_option('deprecation.showPyplotGlobalUse', False)   #Dashboard
                 st.pyplot(graph.basicPlot(y = df['close'], title='Crypto Close Price', y_label= 'Price in Dollars', show_figure = show_figure))                                    #Dashboard
@@ -345,17 +332,11 @@ class DataUnderstanding:
                 st.pyplot(graph.roc_cure_for_one_model(fpr_xgb, tpr_xgb, roc_auc_xgb, "XGBClassifier"))      
         elif opcion == 'Random Forest':
             # Show KPI option 2
-            kpi1, kpi2 = st.columns(2)
-            with kpi1:
-                st.markdown("**Accuracy Testing**")
-                st.markdown(f"<h1 style='text-align: left; color: white;'>{round(rf_test_acc,2)}</h1>", unsafe_allow_html=True)
-            with kpi2:
-                st.markdown("**Accuracy Training**")
-                st.markdown(f"<h1 style='text-align: left; color: white;'>{round(rf_train_acc,2)}</h1>", unsafe_allow_html=True)
+            display_kpis(rf_train_acc, rf_test_acc, "Random Forest")
             # Contenedor para más organización si es necesario
             with st.container():
                 # Pestañas para organizar contenido diferente
-                tab1, tab2, tab3, tab4, tab5 = st.tabs(["Historical_Data", "Dataset","Heatmap", "Confusion Matrix", "Roc Curve"])
+                tab1, tab2, tab3, tab4, tab5 = setup_tabs()
             with tab1:
                 st.set_option('deprecation.showPyplotGlobalUse', False)   #Dashboard
                 st.pyplot(graph.basicPlot(y = df['close'], title='Crypto Close Price', y_label= 'Price in Dollars', show_figure = show_figure))                                    #Dashboard
@@ -369,17 +350,11 @@ class DataUnderstanding:
                 st.pyplot(graph.roc_cure_for_one_model(fpr_rf, tpr_rf, roc_auc_rf, "Random Forest")) 
         elif opcion == 'KNN':
             # Show KPI option 2
-            kpi1, kpi2 = st.columns(2)
-            with kpi1:
-                st.markdown("**Accuracy Testing**")
-                st.markdown(f"<h1 style='text-align: left; color: white;'>{round(rf_train_acc,2)}</h1>", unsafe_allow_html=True)
-            with kpi2:
-                st.markdown("**Accuracy Training**")
-                st.markdown(f"<h1 style='text-align: left; color: white;'>{round(rf_test_acc,2)}</h1>", unsafe_allow_html=True)
+            display_kpis(train_acc_knn, test_acc_knn, "KNN")
             # Contenedor para más organización si es necesario
             with st.container():
                 # Pestañas para organizar contenido diferente
-                tab1, tab2, tab3, tab4, tab5 = st.tabs(["Historical_Data", "Dataset","Heatmap", "Confusion Matrix", "Roc Curve"])
+                tab1, tab2, tab3, tab4, tab5 = setup_tabs()
             with tab1:
                 st.set_option('deprecation.showPyplotGlobalUse', False)   #Dashboard
                 st.pyplot(graph.basicPlot(y = df['close'], title='Crypto Close Price', y_label= 'Price in Dollars', show_figure = show_figure))                                    #Dashboard

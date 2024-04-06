@@ -1,5 +1,6 @@
 import os
 import pandas as pd
+import streamlit as st
 
 def get_csv_file(file_name):
     # Get the current working directory
@@ -28,3 +29,15 @@ def get_data(file_name):
 def get_specific_data(data_frame: pd.DataFrame, crypto_name:str):
     """return data for specific crypto"""
     return data_frame.loc[data_frame['crypto_name'] == crypto_name]
+
+def display_kpis(train_acc, test_acc, model_name):
+    kpi1, kpi2 = st.columns(2)
+    with kpi1:
+        st.markdown("**Accuracy Testing**")
+        st.markdown(f"<h1 style='text-align: left; color: white;'>{round(test_acc,2)}</h1>", unsafe_allow_html=True)
+    with kpi2:
+        st.markdown("**Accuracy Training**")
+        st.markdown(f"<h1 style='text-align: left; color: white;'>{round(train_acc,2)}</h1>", unsafe_allow_html=True)
+
+def setup_tabs():
+    return st.tabs(["Historical_Data", "Dataset","Heatmap", "Confusion Matrix", "ROC Curve"])
