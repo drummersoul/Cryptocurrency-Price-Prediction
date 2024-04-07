@@ -28,24 +28,22 @@ class DataUnderstanding:
     def __init__(self) -> None:
         pass
 
-    def data_understanding(self, file_name : str):
+    def load_and_filter_data(self, file_name: str):
         # Read dataset and display basic informations
         df = get_data(file_name)
-
-        #instantiating Graph & Model classes
-        graph = Graphs()
-        model = Models()
-
         # Filtering data for only Litecoin
         df = get_specific_data(df, 'Litecoin')
-        print(df.shape)
-
+        return df
+    
+    def clean_data(self, df: pd.DataFrame):
         # Removing columns we wont use because they have only null values
         df = df.drop(columns=["volume"])
 
-        # Conver date object type to date type
+        # Convert date object type to date type
         df['date'] = pd.to_datetime(df['date'])
-
+        return df
+    
+    def handle_missing_data(self, df: pd.DataFrame):
         #Created a new dataframe to store newly create date column
         new_df=pd.DataFrame()
         new_df['m_date']=df['date']
@@ -58,7 +56,6 @@ class DataUnderstanding:
         
         #Identify missing dates by finding those which are not in your Datafreme's index
         missing_dates=date_range.difference(new_df.index)
-        print(f'Missing Date:{missing_dates}')
         print(f'Missing Date Size{missing_dates.size}')
         
         #On this other section we will use linear interpolation t add the missing dates and values for each column
@@ -80,17 +77,9 @@ class DataUnderstanding:
         # Fill missing values in 'crypto_name' column with 'Litecoin'.
         df['crypto_name'] = df['crypto_name'].fillna('Litecoin')
         df.drop(['timestamp'], axis=1, inplace=True)
-        print(df.isnull().sum())
-        #To decide if we want to show plots or not
-        show_figure = False
-
-        # Plot historical close price
-        graph.basicPlot(y = df['close'], title='Crypto Close Price',x_label= "years", y_label= 'Price in Dollars', show_figure = show_figure)
-
-        # Define features for future use
-        features = ['open', 'high', 'low', 'close']
-        graph.distPlotWithSubPlot(df, features = features, rows = 2, cols = 2, show_figure = show_figure)
-
+        return df
+    
+    def create_features(self, df: pd.DataFrame):
         # Extract the year from the 'date' column using the dt accessor in pandas
         df['year'] = df['date'].dt.year
         # Extract the month from the 'date' column using the dt accessor in pandas
@@ -106,14 +95,26 @@ class DataUnderstanding:
         df['target'] = np.where(df['close'].shift(-1) > df['close'], 1, 0)
         df['PriceDifference'] = df['open'] - df['close']
         df['UpDown'] = np.where(df['PriceDifference'] > 0, 0, 1)
+        return df
+            
+    def data_understanding(self, df:pd.DataFrame):
+        #instantiating Graph & Model classes
+        graph = Graphs()
+        model = Models()
 
-        # Print the first few rows of the DataFrame to see the changes
-        # print(df.head())
+        #To decide if we want to show plots or not
+        show_figure = False
+
+        # Plot historical close price
+        graph.basicPlot(y = df['close'], title='Crypto Close Price',x_label= "years", y_label= 'Price in Dollars', show_figure = show_figure)
+
+        # Define features for future use
+        features = ['open', 'high', 'low', 'close']
+        graph.distPlotWithSubPlot(df, features = features, rows = 2, cols = 2, show_figure = show_figure)
 
         # Group the DataFrame 'df' by the 'year' column and calculate the mean of each numeric column for each group
         # numeric_only is to calculate mean only for numbers
         data_grouped = df.groupby(by=['year']).mean(numeric_only=True)
-        #print(data_grouped)
 
         bar_plot_features = ['open', 'high', 'low', 'close']
         # Plot a bar chart for the current column using the grouped data
@@ -166,14 +167,6 @@ class DataUnderstanding:
 
         #LogisticRegression
         logistic_reg = model.logistic_regression(X_train, X_test, y_train_class, y_test_class)
-        tscv = TimeSeriesSplit(n_splits=5)
-        logistic_reg_model = LogisticRegression()
-        # cv_scores = cross_val_score(logistic_reg_model, X_train, y_train_class, cv=tscv)
-        # # Print cross-validation scores
-        # print("Cross-validation scores LOG_REG:", cv_scores)
-        # # Print mean and standard deviation of cross-validation scores
-        # print("Mean CV score LOG_REG:", cv_scores.mean())
-        # print("Standard deviation of CV scores LOG_REG:", cv_scores.std())
 
         train_acc_logistic, test_acc_logistic, y_pred_proba_logistic, trained_logistic_reg = logistic_reg
         print(f'Accuracy of Training: {train_acc_logistic}')
@@ -187,8 +180,6 @@ class DataUnderstanding:
         max_depth = 3
         xgbclassifier = model.xgbclassifier(reg_lambda, reg_alpha, learning_rate, max_depth, X_train, X_test, y_train_class, y_test_class)
         train_acc_xgb, test_acc_xgb, y_pred_proba_xgb, trained_xgb_classifier= xgbclassifier
-        tscv = TimeSeriesSplit(n_splits=5)
-        xgb_cv_model = XGBClassifier()
         # cv_scores_xgb = cross_val_score(xgb_cv_model, X_train, y_train_class, cv=tscv)
         # # Print cross-validation scores
         # print("Cross-validation scores XGB:", cv_scores_xgb)
