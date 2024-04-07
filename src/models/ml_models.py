@@ -91,16 +91,18 @@ class Models:
     def display_classificiation_metrics(self, trained_classifier, X_test, y_test, model_name=""):
         y_test_predicted = trained_classifier.predict(X_test)
         #display confusion matrix
-        ConfusionMatrixDisplay.from_predictions(y_test, y_test_predicted)
-        plt.title(f'confusion matrix for {model_name} test data')
-        plt.show()
+        disp = ConfusionMatrixDisplay.from_predictions(y_test, y_test_predicted)
+        disp.plot()
+        plt.title(f'Confusion Matrix for {model_name} Test Data')
+        # Capture the current figure
+        fig = plt.gcf()
         #print precision, recall, f1_score with respect to class with label 1 and accuracy
         precision, recall, f1_score, support = precision_recall_fscore_support(y_test, y_test_predicted, average='binary')
         print(f"classification metrics for {model_name} for test data:")
         print(f"precision: {precision}")
         print(f"recall: {recall}")
         print(f"f1_score: {f1_score}\n")
-        return recall,precision
+        return fig, recall, precision
 
     def class_prediction_error(self, x_train: pd.DataFrame, y_train: pd.DataFrame, x_test: pd.DataFrame, y_test: pd.DataFrame, model, model_name: str):
         visualizer = ClassPredictionError(model,  classes=['low', 'high'])
