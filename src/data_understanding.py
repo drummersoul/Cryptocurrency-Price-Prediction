@@ -4,10 +4,7 @@ from utils.utils import get_data, get_specific_data, display_kpis, setup_tabs
 import warnings  # Adding warning ignore to avoid issues with distplot
 import numpy as np
 import streamlit as st
-from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import roc_curve, roc_auc_score
-from sklearn.model_selection import train_test_split,TimeSeriesSplit,cross_val_score
-from xgboost import XGBClassifier
 from graphs import Graphs
 from models.ml_models import Models
 from sklearn.preprocessing import StandardScaler
@@ -26,7 +23,9 @@ warnings.filterwarnings("ignore", category=ConvergenceWarning)
 class DataUnderstanding:
 
     def __init__(self) -> None:
-        pass
+        #instantiating Graph & Model classes
+        self.graph = Graphs()
+        self.model = Models()
 
     def load_and_filter_data(self, file_name: str):
         # Read dataset and display basic informations
@@ -98,19 +97,16 @@ class DataUnderstanding:
         return df
             
     def data_understanding(self, df:pd.DataFrame):
-        #instantiating Graph & Model classes
-        graph = Graphs()
-        model = Models()
 
         #To decide if we want to show plots or not
         show_figure = False
 
         # Plot historical close price
-        graph.basicPlot(y = df['close'], title='Crypto Close Price',x_label= "years", y_label= 'Price in Dollars', show_figure = show_figure)
+        self.graph.basicPlot(y = df['close'], title='Crypto Close Price',x_label= "years", y_label= 'Price in Dollars', show_figure = show_figure)
 
         # Define features for future use
         features = ['open', 'high', 'low', 'close']
-        graph.distPlotWithSubPlot(df, features = features, rows = 2, cols = 2, show_figure = show_figure)
+        self.graph.distPlotWithSubPlot(df, features = features, rows = 2, cols = 2, show_figure = show_figure)
 
         # Group the DataFrame 'df' by the 'year' column and calculate the mean of each numeric column for each group
         # numeric_only is to calculate mean only for numbers
@@ -118,23 +114,30 @@ class DataUnderstanding:
 
         bar_plot_features = ['open', 'high', 'low', 'close']
         # Plot a bar chart for the current column using the grouped data
-        graph.barplotWithSubplot(data_grouped, bar_plot_features, 2, 2,show_figure = show_figure)
+        self.graph.barplotWithSubplot(data_grouped, bar_plot_features, 2, 2,show_figure = show_figure)
 
         # Keeping the columns for heatmap exploration
         sub_df = df[['open', 'high', 'low', 'close', 'marketCap', 'open_close', 'low_high', 'year', 'month', 'day', 'target']]
-        sub_df.head()
 
         # Correlation for Litecoin crypto
-        graph.graphCorrelation(sub_df.iloc[:, 1:], "Correlation HeatMap for Litecoin",show_figure = show_figure)
+        self.graph.graphCorrelation(sub_df.iloc[:, 1:], "Correlation HeatMap for Litecoin",show_figure = show_figure)
 
         visualize_cols = ['open', 'high', 'low', 'marketCap']
 
         # ploting graph to check correlation
-        graph.scatterPlotWithSubPlot(sub_df, 'close', visualize_cols, 2, 2,show_figure = show_figure)
+        self.graph.scatterPlotWithSubPlot(sub_df, 'close', visualize_cols, 2, 2,show_figure = show_figure)
 
         # boxplot to check outliers with whisker_length(whis) of 1.5(default value)
-        graph.boxPlotWithSubplot(sub_df, visualize_cols, 2, 2,show_figure = show_figure)
+        self.graph.boxPlotWithSubplot(sub_df, visualize_cols, 2, 2,show_figure = show_figure)
         
+        
+    def train_models(self, df: pd.DataFrame):
+        model = self.model
+        graph = self.graph
+        show_figure = False   
+        sub_df = df[['open', 'high', 'low', 'close', 'marketCap', 'open_close', 'low_high', 'year', 'month', 'day', 'target']]
+        
+
         #feature and target variables for classification
         X = df[['open', 'high', 'low', 'marketCap', 'year', 'month', 'day']]
         y = df['UpDown']
@@ -153,17 +156,8 @@ class DataUnderstanding:
         y_train = y[:splitting_index]
         y_test = y[splitting_index:]
 
-        print(f"X_train: {X_train.shape}")
-        print(f"X_test: {X_test.shape}")
-        print(f"y_train: {y_train.shape}")
-        print(f"y_test: {y_test.shape}")
-
         y_train_class = y_train
         y_test_class = y_test
-
-        #testing for class counts
-        print("class counts of train_data:")
-        print(y_train_class.value_counts()) 
 
         #LogisticRegression
         logistic_reg = model.logistic_regression(X_train, X_test, y_train_class, y_test_class)
@@ -173,22 +167,22 @@ class DataUnderstanding:
         print(f'Accuracy of Testing: {test_acc_logistic}')
 
         #use XGBClassifier to tain a model and predict classes
-
         reg_lambda = 1.0
         reg_alpha = 0.5
         learning_rate = 0.01
         max_depth = 3
         xgbclassifier = model.xgbclassifier(reg_lambda, reg_alpha, learning_rate, max_depth, X_train, X_test, y_train_class, y_test_class)
         train_acc_xgb, test_acc_xgb, y_pred_proba_xgb, trained_xgb_classifier= xgbclassifier
-        # cv_scores_xgb = cross_val_score(xgb_cv_model, X_train, y_train_class, cv=tscv)
-        # # Print cross-validation scores
-        # print("Cross-validation scores XGB:", cv_scores_xgb)
-        # # Print mean and standard deviation of cross-validation scores
-        # print("Mean CV score XGB:", cv_scores_xgb.mean())
-        # print("Standard deviation of CV scores XGB:", cv_scores_xgb.std())
         print("Evaluation results for XGBClassifier:")
         print(f"training set accuracy: {train_acc_xgb}")
         print(f"test set accuracy: {test_acc_xgb}")
+
+        #Random Forest Algorithem
+        rf_train_acc, rf_test_acc, rf_y_pred, traind_classifer_rf = model.random_forest(X_train, X_test, y_train_class, y_test_class)
+        print(" Random Forest -- Train Accuracy ==>> ", rf_train_acc)
+        print(" Random Forest -- Test Accuracy ==>> ", rf_test_acc)
+
+        y_pred_knn, train_acc_knn, test_acc_knn, knn_model = model.knn(X_train, X_test, y_train_class, y_test_class)
 
         prophet_data = df[['date','close']].copy()
         prophet_data.columns = ['ds', 'y']
@@ -235,10 +229,6 @@ class DataUnderstanding:
         # Plotting ROC curve for both models
         graph.roc_cure(fpr_logistic, tpr_logistic,roc_auc_logistic, fpr_xgb, tpr_xgb, roc_auc_xgb,show_figure = show_figure)
 
-        #Random Forest Algorithem
-        rf_train_acc, rf_test_acc, rf_y_pred, traind_classifer_rf = model.random_forest(X_train, X_test, y_train_class, y_test_class)
-        print(" Random Forest -- Train Accuracy ==>> ", rf_train_acc)
-        print(" Random Forest -- Test Accuracy ==>> ", rf_test_acc)
 
         #ploting Roc-curve for Random Forest
         fpr_rf, tpr_rf, threshold_rf = roc_curve(y_test_class, rf_y_pred)
@@ -247,23 +237,6 @@ class DataUnderstanding:
         roc_auc_rf = roc_auc_score(y_test_class, rf_y_pred)
         graph.roc_cure_for_one_model(fpr_rf, tpr_rf, roc_auc_rf, "Random Forest")
 
-        print()
-        print("KNN Model : ", end="\n\n")
-        # Instantiate KNN model
-        knn_model = KNeighborsClassifier(n_neighbors=5)
-
-        # Train the model
-        knn_model.fit(X_train, y_train_class)
-
-        # Predict classes for test data
-        y_pred_knn = knn_model.predict(X_test)
-
-        # Evaluate model performance
-        train_acc_knn = knn_model.score(X_train, y_train_class)
-        test_acc_knn = knn_model.score(X_test, y_test_class)
-
-        print("KNN - Train Accuracy:", train_acc_knn)
-        print("KNN - Test Accuracy:", test_acc_knn)
 
          # Calculate ROC curve and AUC for KNN
         fpr_knn, tpr_knn, thresholds_knn = roc_curve(y_test_class, y_pred_knn)

@@ -8,6 +8,8 @@ def run(file_name : str = 'crypto_data_info.csv'):
     cleaned_data = du.handle_missing_data(cleaned_data)
     data_with_new_features = du.create_features(cleaned_data)
     du.data_understanding(data_with_new_features)
+    du.train_models(data_with_new_features)
+    # evaluate
     print("******************** End ********************")
 
 

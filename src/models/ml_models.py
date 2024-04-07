@@ -211,3 +211,26 @@ class Models:
         print('Recall of test is '+ str(recall_score(y_test,grid_search.predict(x_test))))
         print('F1 of test is '+ str(f1_score(y_test,grid_search.predict(x_test))))
         print('ROC AUC of test is '+ str(roc_auc_score(y_test,grid_search.predict(x_test))))
+
+    def knn(self, x_train : pd.DataFrame, x_test : pd.DataFrame, y_train : pd.Series, y_test : pd.Series):
+
+        self.__shape_validation(x_train.shape, x_test.shape, y_train.shape, y_test.shape)
+
+        model_name = "KNN Model"
+        print("KNN Model : ", end="\n\n")
+        # Instantiate KNN model
+        knn = KNeighborsClassifier(n_neighbors=5)
+
+        # Train the model
+        knn.fit(x_train, y_train)
+
+        # Predict classes for test data
+        y_pred_knn = knn.predict(x_test)
+
+        # Evaluate model performance
+        train_acc_knn = knn.score(x_train, y_train)
+        test_acc_knn = knn.score(x_test, y_test)
+
+        # #display confusion matrix
+        # self.display_classificiation_metrics(knn, x_test, y_test, model_name)
+        return y_pred_knn, train_acc_knn, test_acc_knn, knn
