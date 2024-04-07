@@ -157,8 +157,6 @@ class DataUnderstanding:
         print(f"y_train: {y_train.shape}")
         print(f"y_test: {y_test.shape}")
 
-        # y_train_class = (y_train.shift(-1) > y_train).astype(int)
-        # y_test_class = (y_test.shift(-1) > y_test).astype(int)
         y_train_class = y_train
         y_test_class = y_test
 
@@ -180,9 +178,6 @@ class DataUnderstanding:
         train_acc_logistic, test_acc_logistic, y_pred_proba_logistic, trained_logistic_reg = logistic_reg
         print(f'Accuracy of Training: {train_acc_logistic}')
         print(f'Accuracy of Testing: {test_acc_logistic}')
-
-        # model.xgb_gcv(X_train, X_test, y_train_class, y_test_class)
-        # model.logr_gcv(X_train, X_test, y_train_class, y_test_class)
 
         #use XGBClassifier to tain a model and predict classes
 
@@ -285,11 +280,11 @@ class DataUnderstanding:
 
         # Plot ROC curve for KNN
         graph.roc_cure_for_one_model(fpr_knn, tpr_knn, roc_auc_knn, "KNN")
-        logistic_recall,logistic_precison=model.display_classificiation_metrics(trained_logistic_reg, X_test, y_test_class, model_name="Logistic Regression")
-        xgbclassifier_recall, xgbclassifier_precison=model.display_classificiation_metrics(trained_xgb_classifier, X_test, y_test_class, model_name="XGB Classifier")
+        logistic_fig, logistic_recall,logistic_precison=model.display_classificiation_metrics(trained_logistic_reg, X_test, y_test_class, model_name="Logistic Regression")
+        xgbclassifier_fig, xgbclassifier_recall, xgbclassifier_precison=model.display_classificiation_metrics(trained_xgb_classifier, X_test, y_test_class, model_name="XGB Classifier")
         
-        knn_recall,knn_precison=model.display_classificiation_metrics(knn_model,X_test,y_test_class,model_name="knn")
-        rf_recall,rf_precison=model.display_classificiation_metrics(traind_classifer_rf, X_test, y_test_class, "Random Forest")
+        knn_fig, knn_recall,knn_precison=model.display_classificiation_metrics(knn_model,X_test,y_test_class,model_name="knn")
+        rf_fig, rf_recall,rf_precison=model.display_classificiation_metrics(traind_classifer_rf, X_test, y_test_class, "Random Forest")
         #To decide if we want to show plots or not
         show_figure = True   
         st.set_page_config(
@@ -319,7 +314,7 @@ class DataUnderstanding:
             with tab3:
                 st.pyplot(graph.graphCorrelation(sub_df.iloc[:, 1:], "Correlation HeatMap for Litecoin",show_figure = show_figure))
             with tab4:
-                st.pyplot(model.display_classificiation_metrics(trained_logistic_reg, X_test, y_test_class, "Logistic Regression"))   
+                st.pyplot(logistic_fig)   
             with tab5:
                 st.pyplot(graph.roc_cure_for_one_model(fpr_logistic, tpr_logistic, roc_auc_logistic, "Logistic Regression")) 
         elif opcion == 'XGB Classifier':
@@ -337,7 +332,7 @@ class DataUnderstanding:
             with tab3:
                 st.pyplot(graph.graphCorrelation(sub_df.iloc[:, 1:], "Correlation HeatMap for Litecoin",show_figure = show_figure)) 
             with tab4:
-                st.pyplot(model.display_classificiation_metrics(trained_xgb_classifier, X_test, y_test_class, "XGBClassifier"))   
+                st.pyplot(xgbclassifier_fig)   
             with tab5:
                 st.pyplot(graph.roc_cure_for_one_model(fpr_xgb, tpr_xgb, roc_auc_xgb, "XGBClassifier"))      
         elif opcion == 'Random Forest':
@@ -355,7 +350,7 @@ class DataUnderstanding:
             with tab3:
                 st.pyplot(graph.graphCorrelation(sub_df.iloc[:, 1:], "Correlation HeatMap for Litecoin",show_figure = show_figure))  
             with tab4:
-                st.pyplot(model.display_classificiation_metrics(traind_classifer_rf, X_test, y_test_class, "Random Forest"))   
+                st.pyplot(rf_fig)   
             with tab5:
                 st.pyplot(graph.roc_cure_for_one_model(fpr_rf, tpr_rf, roc_auc_rf, "Random Forest")) 
         elif opcion == 'KNN':
