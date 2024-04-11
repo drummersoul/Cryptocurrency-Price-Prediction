@@ -39,7 +39,7 @@ class Dashboard:
                 tab1, tab2, tab3, tab4, tab5 = setup_tabs()
             with tab1:
                 st.set_option('deprecation.showPyplotGlobalUse', False)   #Dashboard
-                st.pyplot(self.graph.basicPlot(y = df['close'], title='Crypto Close Price', y_label= 'Price in Dollars', show_figure = show_figure))                                    #Dashboard
+                st.pyplot(self.graph.basicPlot(y = df['close'], title='Crypto Close Price', y_label= 'Price in Dollars', show_figure = show_figure))
             with tab2:
                 st.dataframe(df) #Dashboard
             with tab3:
@@ -57,7 +57,7 @@ class Dashboard:
                 tab1, tab2, tab3, tab4, tab5 = setup_tabs()
             with tab1:
                 st.set_option('deprecation.showPyplotGlobalUse', False)   #Dashboard
-                st.pyplot(self.graph.basicPlot(y = df['close'], title='Crypto Close Price', y_label= 'Price in Dollars', show_figure = show_figure))                                    #Dashboard
+                st.pyplot(self.graph.basicPlot(y = df['close'], title='Crypto Close Price', y_label= 'Price in Dollars', show_figure = show_figure))
             with tab2:
                 st.dataframe(df)                                  #Dashboard
             with tab3:
@@ -75,7 +75,7 @@ class Dashboard:
                 tab1, tab2, tab3, tab4, tab5 = setup_tabs()
             with tab1:
                 st.set_option('deprecation.showPyplotGlobalUse', False)   #Dashboard
-                st.pyplot(self.graph.basicPlot(y = df['close'], title='Crypto Close Price', y_label= 'Price in Dollars', show_figure = show_figure))                                    #Dashboard
+                st.pyplot(self.graph.basicPlot(y = df['close'], title='Crypto Close Price', y_label= 'Price in Dollars', show_figure = show_figure))
             with tab2:
                 st.dataframe(df)
             with tab3:
@@ -93,8 +93,7 @@ class Dashboard:
                 tab1, tab2, tab3, tab4, tab5 = setup_tabs()
             with tab1:
                 st.set_option('deprecation.showPyplotGlobalUse', False)   #Dashboard
-                st.pyplot(self.graph.basicPlot(y = df['close'], title='Crypto Close Price', y_label= 'Price in Dollars', show_figure = show_figure))                                    #Dashboard
-            with tab2:
+                st.pyplot(self.graph.basicPlot(y = df['close'], title='Crypto Close Price', y_label= 'Price in Dollars', show_figure = show_figure))
                 st.dataframe(df)
             with tab3:
                 st.pyplot(self.graph.graphCorrelation(sub_df.iloc[:, 1:], "Correlation HeatMap for Litecoin",show_figure = show_figure))  
@@ -108,7 +107,7 @@ class Dashboard:
                 tab1, tab2, tab3 = st.tabs(["Historical_Data", "Dataset","Heatmap"])
             with tab1:
                 st.set_option('deprecation.showPyplotGlobalUse', False)   #Dashboard
-                st.pyplot(self.graph.basicPlot(y = df['close'], title='Crypto Close Price', y_label= 'Price in Dollars', show_figure = show_figure))                                    #Dashboard
+                st.pyplot(self.graph.basicPlot(y = df['close'], title='Crypto Close Price', y_label= 'Price in Dollars', show_figure = show_figure))
             with tab2:
                 st.dataframe(df)                                  #Dashboard
             with tab3:
