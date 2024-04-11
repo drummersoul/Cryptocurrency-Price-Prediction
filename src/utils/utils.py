@@ -12,6 +12,8 @@ def get_csv_file(file_name):
     file_name = file_name.strip('/') 
     # Specify the relative path to the CSV file from the current directory
     print(current_directory)
+    if(current_directory.endswith("\src")):
+        current_directory = current_directory[0:len(current_directory)-4]
     csv_file_location = os.path.join(current_directory, "data", file_name)
 
     return csv_file_location

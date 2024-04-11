@@ -3,7 +3,6 @@ import matplotlib.pyplot as plt
 from utils.utils import get_data, get_specific_data, display_kpis, setup_tabs
 import warnings  # Adding warning ignore to avoid issues with distplot
 import numpy as np
-import streamlit as st
 from sklearn.metrics import roc_curve, roc_auc_score
 from graphs import Graphs
 from models.ml_models import Models
@@ -17,6 +16,7 @@ from prophet.plot import plot_forecast_component
 from sklearn.neighbors import KNeighborsClassifier
 warnings.filterwarnings('ignore')
 from sklearn.exceptions import ConvergenceWarning
+from dashboard import Dashboard
 # This will ignore all convergence warnings
 warnings.filterwarnings("ignore", category=ConvergenceWarning)
 
@@ -26,6 +26,7 @@ class DataUnderstanding:
         #instantiating Graph & Model classes
         self.graph = Graphs()
         self.model = Models()
+        self.dashboard = Dashboard()
 
     def load_and_filter_data(self, file_name: str):
         # Read dataset and display basic informations
@@ -249,94 +250,9 @@ class DataUnderstanding:
         
         knn_fig, knn_recall,knn_precison=model.display_classificiation_metrics(knn_model,X_test,y_test_class,model_name="knn")
         rf_fig, rf_recall,rf_precison=model.display_classificiation_metrics(traind_classifer_rf, X_test, y_test_class, "Random Forest")
-        #To decide if we want to show plots or not
-        show_figure = True   
-        st.set_page_config(
-            page_title="Crypto Prediciton Dashboard",
-            page_icon="💸",
-            layout="centered",
-            initial_sidebar_state="expanded")
-        # Title
-        st.title("Litecoin Price Prediction Dashboard")
-        
-        opcion = st.sidebar.selectbox(
-                'Select a model',
-                ('Logistic Regression', 'XGB Classifier','Random Forest', "KNN", "More")  # available options
-                )
 
-        # Content based on option selected by user
-        if opcion == 'Logistic Regression':
-            display_kpis(train_acc_logistic, test_acc_logistic, logistic_recall, logistic_precison, "Logistic Regression")
-            with st.container():
-                # Pestañas para organizar contenido diferente
-                tab1, tab2, tab3, tab4, tab5 = setup_tabs()
-            with tab1:
-                st.set_option('deprecation.showPyplotGlobalUse', False)   #Dashboard
-                st.pyplot(graph.basicPlot(y = df['close'], title='Crypto Close Price', y_label= 'Price in Dollars', show_figure = show_figure))                                    #Dashboard
-            with tab2:
-                st.dataframe(df)                                  #Dashboard
-            with tab3:
-                st.pyplot(graph.graphCorrelation(sub_df.iloc[:, 1:], "Correlation HeatMap for Litecoin",show_figure = show_figure))
-            with tab4:
-                st.pyplot(logistic_fig)   
-            with tab5:
-                st.pyplot(graph.roc_cure_for_one_model(fpr_logistic, tpr_logistic, roc_auc_logistic, "Logistic Regression")) 
-        elif opcion == 'XGB Classifier':
-            # Show KPI option 2
-            display_kpis(train_acc_xgb, test_acc_xgb, xgbclassifier_recall, xgbclassifier_precison, "XGB Classifier")
-            # Contenedor para más organización si es necesario
-            with st.container():
-                # Pestañas para organizar contenido diferente
-                tab1, tab2, tab3, tab4, tab5 = setup_tabs()
-            with tab1:
-                st.set_option('deprecation.showPyplotGlobalUse', False)   #Dashboard
-                st.pyplot(graph.basicPlot(y = df['close'], title='Crypto Close Price', y_label= 'Price in Dollars', show_figure = show_figure))                                    #Dashboard
-            with tab2:
-                st.dataframe(df)                                  #Dashboard
-            with tab3:
-                st.pyplot(graph.graphCorrelation(sub_df.iloc[:, 1:], "Correlation HeatMap for Litecoin",show_figure = show_figure)) 
-            with tab4:
-                st.pyplot(xgbclassifier_fig)   
-            with tab5:
-                st.pyplot(graph.roc_cure_for_one_model(fpr_xgb, tpr_xgb, roc_auc_xgb, "XGBClassifier"))      
-        elif opcion == 'Random Forest':
-            # Show KPI option 2
-            display_kpis(rf_train_acc, rf_test_acc,rf_recall,rf_precison, "Random Forest")
-            # Contenedor para más organización si es necesario
-            with st.container():
-                # Pestañas para organizar contenido diferente
-                tab1, tab2, tab3, tab4, tab5 = setup_tabs()
-            with tab1:
-                st.set_option('deprecation.showPyplotGlobalUse', False)   #Dashboard
-                st.pyplot(graph.basicPlot(y = df['close'], title='Crypto Close Price', y_label= 'Price in Dollars', show_figure = show_figure))                                    #Dashboard
-            with tab2:
-                st.dataframe(df)
-            with tab3:
-                st.pyplot(graph.graphCorrelation(sub_df.iloc[:, 1:], "Correlation HeatMap for Litecoin",show_figure = show_figure))  
-            with tab4:
-                st.pyplot(rf_fig)   
-            with tab5:
-                st.pyplot(graph.roc_cure_for_one_model(fpr_rf, tpr_rf, roc_auc_rf, "Random Forest")) 
-        elif opcion == 'KNN':
-            # Show KPI option 2
-            display_kpis(train_acc_knn, test_acc_knn,knn_recall,knn_precison,"KNN")
-            # Contenedor para más organización si es necesario
-            with st.container():
-                # Pestañas para organizar contenido diferente   
-                tab1, tab2, tab3, tab4, tab5 = setup_tabs()
-            with tab1:
-                st.set_option('deprecation.showPyplotGlobalUse', False)   #Dashboard
-                st.pyplot(graph.basicPlot(y = df['close'], title='Crypto Close Price', y_label= 'Price in Dollars', show_figure = show_figure))                                    #Dashboard
-            with tab2:
-                st.dataframe(df)
-        elif opcion=="More":
-            with st.container():
-                # Pestañas para organizar contenido diferente
-                tab1, tab2, tab3 = st.tabs(["Historical_Data", "Dataset","Heatmap"])
-            with tab1:
-                st.set_option('deprecation.showPyplotGlobalUse', False)   #Dashboard
-                st.pyplot(graph.basicPlot(y = df['close'], title='Crypto Close Price', y_label= 'Price in Dollars', show_figure = show_figure))                                    #Dashboard
-            with tab2:
-                st.dataframe(df)                                  #Dashboard
-            with tab3:
-                st.pyplot(graph.graphCorrelation(sub_df.iloc[:, 1:], "Correlation HeatMap for Litecoin",show_figure = show_figure))   
+        return ((train_acc_logistic, test_acc_logistic, logistic_recall, logistic_precison, logistic_fig, fpr_logistic, tpr_logistic, roc_auc_logistic),
+                                 (train_acc_xgb, test_acc_xgb, xgbclassifier_recall, xgbclassifier_precison, xgbclassifier_fig, fpr_xgb, tpr_xgb, roc_auc_xgb),
+                                 (rf_train_acc, rf_test_acc, rf_recall, rf_precison, rf_fig,fpr_rf, tpr_rf, roc_auc_rf),
+                                 (train_acc_knn, test_acc_knn, knn_recall, knn_precison, knn_fig, fpr_knn, tpr_knn, roc_auc_knn),
+                                 (df, sub_df))
