@@ -139,7 +139,7 @@ class DataUnderstanding:
         graph = self.graph
         show_figure = False
         sub_df = df[
-            ['open', 'high', 'low', 'close', 'marketCap', 'open_close', 'low_high', 'year', 'month', 'day', 'UpDown']]
+            ['open', 'high', 'low', 'close', 'marketCap', 'year', 'month', 'day', 'UpDown']]
 
         # feature and target variables for classification
         # x = df[['open', 'high', 'low', 'marketCap', 'year', 'month', 'day']]

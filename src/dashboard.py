@@ -113,6 +113,7 @@ class Dashboard:
                 st.pyplot(knn_fig)
             with tab5:
                 st.pyplot(self.graph.roc_cure_for_one_model(fpr_knn, tpr_knn, roc_auc_knn, "KNN"))
+
         elif opcion == "More":
             with st.container():
                 # Pestañas para organizar contenido diferente
@@ -126,3 +127,4 @@ class Dashboard:
             with tab3:
                 st.pyplot(self.graph.graphCorrelation(sub_df.iloc[:, 1:], "Correlation HeatMap for Litecoin",
                                                       show_figure=show_figure))
+
