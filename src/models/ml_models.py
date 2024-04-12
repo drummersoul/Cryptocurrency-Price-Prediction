@@ -1,10 +1,19 @@
 import pandas as pd
 import math as math
 from sklearn.linear_model import LinearRegression, LogisticRegression #, SGDRegressor, Lasso, LassoCV, Ridge, RidgeCV, ElasticNet, ElasticNetCV
-from sklearn.metrics import accuracy_score, mean_squared_error, r2_score
+from sklearn.metrics import (
+    accuracy_score,
+    mean_squared_error,
+    r2_score,
+    ConfusionMatrixDisplay,
+    precision_score,
+    recall_score,
+    f1_score,
+    roc_auc_score,
+    confusion_matrix,
+    precision_recall_fscore_support
+)
 from xgboost import XGBClassifier
-from sklearn.metrics import ConfusionMatrixDisplay, accuracy_score, precision_score, recall_score, f1_score, roc_auc_score
-from sklearn.metrics import precision_recall_fscore_support
 from yellowbrick.classifier import ClassPredictionError
 import matplotlib.pyplot as plt
 from sklearn.model_selection import cross_val_score, GridSearchCV
@@ -86,7 +95,9 @@ class Models:
     def display_classificiation_metrics(self, trained_classifier, X_test, y_test, model_name=""):
         y_test_predicted = trained_classifier.predict(X_test)
         #display confusion matrix
-        disp = ConfusionMatrixDisplay.from_predictions(y_test, y_test_predicted)
+        cm = confusion_matrix(y_test, y_test_predicted)
+        # Create ConfusionMatrixDisplay object without plotting
+        disp = ConfusionMatrixDisplay(confusion_matrix=cm, display_labels=trained_classifier.classes_)
         disp.plot()
         plt.title(f'Confusion Matrix for {model_name} Test Data')
         # Capture the current figure
