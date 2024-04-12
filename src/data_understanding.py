@@ -120,7 +120,8 @@ class DataUnderstanding:
 
         # Keeping the columns for heatmap exploration
         sub_df = df[
-            ['open', 'high', 'low', 'close', 'marketCap', 'open_close', 'low_high', 'year', 'month', 'day', 'target']]
+            ['open', 'high', 'low', 'close', 'marketCap', 'MA7', 'MA30', 'Price_Change', 'low_high', 'year',
+             'month', 'day', 'UpDown', ]]
 
         # Correlation for Litecoin crypto
         self.graph.graphCorrelation(sub_df.iloc[:, 1:], "Correlation HeatMap for Litecoin", show_figure=show_figure)
@@ -138,10 +139,11 @@ class DataUnderstanding:
         graph = self.graph
         show_figure = False
         sub_df = df[
-            ['open', 'high', 'low', 'close', 'marketCap', 'open_close', 'low_high', 'year', 'month', 'day', 'target']]
+            ['open', 'high', 'low', 'close', 'marketCap', 'open_close', 'low_high', 'year', 'month', 'day', 'UpDown']]
 
         # feature and target variables for classification
-        x = df[['open', 'high', 'low', 'marketCap', 'year', 'month', 'day']]
+        # x = df[['open', 'high', 'low', 'marketCap', 'year', 'month', 'day']]
+        x = df[['marketCap', 'open', 'year', 'month', 'day']]
         y = df['UpDown']
 
         scaler = StandardScaler()
