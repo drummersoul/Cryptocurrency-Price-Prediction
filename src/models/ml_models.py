@@ -34,9 +34,6 @@ class Models:
 
         y_pred_proba_logistic = logistic_reg.predict_proba(x_test)[:, 1]
 
-        # display confusion matrix, and classification report
-        self.display_classificiation_metrics(logistic_reg, x_test, y_test, model_name)
-
         return train_acc, test_acc, y_pred_proba_logistic, logistic_reg
 
     def xgbclassifier(self, reg_lambda: float, reg_alpha: float, learning_rate: float, max_depth: int, x_train : pd.DataFrame, x_test : pd.DataFrame, y_train : pd.Series, y_test : pd.Series):
@@ -61,8 +58,6 @@ class Models:
 
         xgbclassifier_model = xgbclassifier
         y_pred_proba_xgb = xgbclassifier_model.predict_proba(x_test)[:, 1]
-
-        self.display_classificiation_metrics(xgbclassifier, x_test, y_test, model_name)
 
         self.class_prediction_error(x_train, x_test, x_test, y_test, xgbclassifier, 'XGBClassifier')
         return train_acc_xgb, test_acc_xgb, y_pred_proba_xgb, xgbclassifier
@@ -157,9 +152,6 @@ class Models:
         train_acc = accuracy_score(y_train, rf_train_pred)
         test_acc = accuracy_score(y_test, rf_y_pred)
 
-        #display confusion matrix
-        self.display_classificiation_metrics(rf, x_test, y_test, model_name)
-
         return train_acc, test_acc, rf_y_pred, rf
 
     def logr_gcv(self, x_train: pd.DataFrame, x_test: pd.DataFrame, y_train: pd.Series, y_test: pd.Series):
@@ -231,6 +223,4 @@ class Models:
         train_acc_knn = knn.score(x_train, y_train)
         test_acc_knn = knn.score(x_test, y_test)
 
-        # #display confusion matrix
-        # self.display_classificiation_metrics(knn, x_test, y_test, model_name)
         return y_pred_knn, train_acc_knn, test_acc_knn, knn
