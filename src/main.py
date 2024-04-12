@@ -1,7 +1,8 @@
 from data_understanding import DataUnderstanding
 from dashboard import Dashboard
 
-def run(file_name : str = 'crypto_data_info.csv'):
+
+def run(file_name: str = 'crypto_data_info.csv'):
     du = DataUnderstanding()
     dashboard = Dashboard()
     print("******************** Start ********************")
@@ -16,5 +17,5 @@ def run(file_name : str = 'crypto_data_info.csv'):
     print("******************** End ********************")
 
 
-if(__name__ == "__main__"):
+if (__name__ == "__main__"):
     run()
