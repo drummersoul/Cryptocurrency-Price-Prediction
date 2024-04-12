@@ -12,4 +12,8 @@ $ pip freeze > requirements.txt # to update requirements.txt
 ### Running the Dashboard
 ```bash
 $ streamlit run src/main.py
+
+or
+
+$ bash run_dashboard.sh
 ```
