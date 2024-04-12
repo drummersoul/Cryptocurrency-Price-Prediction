@@ -17,5 +17,5 @@ def run(file_name: str = 'crypto_data_info.csv'):
     print("******************** End ********************")
 
 
-if (__name__ == "__main__"):
+if __name__ == "__main__":
     run()

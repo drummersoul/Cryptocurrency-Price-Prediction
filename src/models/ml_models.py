@@ -44,7 +44,16 @@ class Models:
 
         y_pred_proba_logistic = logistic_reg.predict_proba(x_test)[:, 1]
 
-        return train_acc, test_acc, y_pred_proba_logistic, logistic_reg
+        # Choose a threshold value that you have determined is optimal
+        threshold = 0.5  # Example threshold, you need to determine the optimal one
+
+        # Apply the threshold to the predicted probabilities to create new class predictions
+        test_pred_custom_threshold = (y_pred_proba_logistic >= threshold).astype(int)
+
+        # Calculate accuracy on the test data using the custom threshold
+        test_acc_custom_threshold = accuracy_score(y_test, test_pred_custom_threshold)
+
+        return train_acc, test_acc_custom_threshold, y_pred_proba_logistic, logistic_reg
 
     def xgbclassifier(self, reg_lambda: float, reg_alpha: float, learning_rate: float, max_depth: int,
                       x_train: pd.DataFrame, x_test: pd.DataFrame, y_train: pd.Series, y_test: pd.Series):
@@ -158,7 +167,15 @@ class Models:
 
         model_name = "Random Forest"
         print("Random Forest : ", end="\n\n")
-        rf = RandomForestClassifier()
+        rf = RandomForestClassifier(
+            n_estimators=100,    # More trees (can be tuned using cross-validation)
+            max_depth=6,        # Shallower trees
+            min_samples_split=4, # More samples required to split a node
+            min_samples_leaf=2,  # More samples required at a leaf node
+            bootstrap=True,      # Use bootstrapping
+            max_features='sqrt'  # Number of features for best split
+        )
+
         rf.fit(x_train, y_train)
 
         rf_train_pred = rf.predict(x_train)

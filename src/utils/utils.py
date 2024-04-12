@@ -1,6 +1,8 @@
 import os
 import pandas as pd
 import streamlit as st
+from pathlib import Path
+import pandas as pd
 
 
 def get_csv_file(file_name):
@@ -19,16 +21,19 @@ def get_csv_file(file_name):
 
 
 def get_data(file_name):
-    """return data as data frame"""
-    path = get_csv_file(file_name)
+    current_script_path = Path(__file__).parent
+    data_path = current_script_path.parent.parent / 'data' / file_name
 
-    # Check if the file exists
-    if os.path.exists(path):
-        dataframe = pd.read_csv(path)
-        print("File successfully loaded.")
+    try:
+        dataframe = pd.read_csv(data_path)
+        print(f"Successfully loaded the file: {data_path}")
         return dataframe
-    else:
-        print(f"File not found at location: {path}")
+    except FileNotFoundError as e:
+        print(f"File not found at: {data_path}. Error: {e}")
+        return None
+    except Exception as e:
+        print(f"An error occurred when attempting to read the file: {e}")
+        return None
 
 
 def get_specific_data(data_frame: pd.DataFrame, crypto_name: str):
