@@ -142,14 +142,11 @@ class DataUnderstanding:
             ['open', 'high', 'low', 'close', 'marketCap', 'year', 'month', 'day', 'UpDown']]
 
         # feature and target variables for classification
-        # x = df[['open', 'high', 'low', 'marketCap', 'year', 'month', 'day']]
         x = df[['marketCap', 'open', 'year', 'month', 'day']]
         y = df['UpDown']
 
         scaler = StandardScaler()
         x = scaler.fit_transform(x)
-
-        # x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=0.1, random_state=2022)
 
         # calculate the index for the split
         splitting_index = int(len(df) * 0.8)
